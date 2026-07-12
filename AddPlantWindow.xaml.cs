@@ -5,15 +5,21 @@ namespace PlantWidget;
 
 public partial class AddPlantWindow : Window
 {
+    private readonly bool _isNewPlant;
+
     public string PlantName { get; private set; } = "";
     public int IntervalDays { get; private set; } = 7;
+    public int DaysSinceWatered { get; private set; } = 0;
 
     public AddPlantWindow(string? name = null, int? intervalDays = null)
     {
         InitializeComponent();
-        TitleText.Text = name == null ? "Новый цветок" : "Редактировать цветок";
+        _isNewPlant = name == null;
+        TitleText.Text = _isNewPlant ? "Новый цветок" : "Редактировать цветок";
         NameBox.Text = name ?? "";
         IntervalBox.Text = (intervalDays ?? 7).ToString();
+        DaysAgoBox.Text = "0";
+        DaysAgoPanel.Visibility = _isNewPlant ? Visibility.Visible : Visibility.Collapsed;
         NameBox.Focus();
     }
 
@@ -38,8 +44,16 @@ public partial class AddPlantWindow : Window
             return;
         }
 
+        var daysAgo = 0;
+        if (_isNewPlant && (!int.TryParse(DaysAgoBox.Text.Trim(), out daysAgo) || daysAgo < 0))
+        {
+            ShowError("Дней с последнего полива — число 0 или больше.");
+            return;
+        }
+
         PlantName = name;
         IntervalDays = interval;
+        DaysSinceWatered = daysAgo;
         DialogResult = true;
     }
 

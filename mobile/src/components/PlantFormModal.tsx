@@ -7,18 +7,21 @@ interface Props {
   initialName?: string;
   initialInterval?: number;
   onCancel: () => void;
-  onSave: (name: string, intervalDays: number) => void;
+  onSave: (name: string, intervalDays: number, daysSinceWatered: number) => void;
 }
 
 export function PlantFormModal({ visible, initialName, initialInterval, onCancel, onSave }: Props) {
+  const isNewPlant = !initialName;
   const [name, setName] = useState(initialName ?? '');
   const [interval, setInterval] = useState(String(initialInterval ?? 7));
+  const [daysAgo, setDaysAgo] = useState('0');
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (visible) {
       setName(initialName ?? '');
       setInterval(String(initialInterval ?? 7));
+      setDaysAgo('0');
       setError('');
     }
   }, [visible, initialName, initialInterval]);
@@ -34,7 +37,12 @@ export function PlantFormModal({ visible, initialName, initialInterval, onCancel
       setError('Интервал должен быть положительным числом дней.');
       return;
     }
-    onSave(trimmedName, days);
+    const daysAgoNum = parseInt(daysAgo.trim(), 10);
+    if (!Number.isFinite(daysAgoNum) || daysAgoNum < 0) {
+      setError('Дней с последнего полива — число 0 или больше.');
+      return;
+    }
+    onSave(trimmedName, days, daysAgoNum);
   };
 
   return (
@@ -59,6 +67,18 @@ export function PlantFormModal({ visible, initialName, initialInterval, onCancel
             onChangeText={setInterval}
             keyboardType="number-pad"
           />
+
+          {isNewPlant && (
+            <>
+              <Text style={styles.label}>Дней с последнего полива</Text>
+              <TextInput
+                style={styles.input}
+                value={daysAgo}
+                onChangeText={setDaysAgo}
+                keyboardType="number-pad"
+              />
+            </>
+          )}
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 

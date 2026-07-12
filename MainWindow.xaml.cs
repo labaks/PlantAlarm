@@ -284,7 +284,12 @@ public partial class MainWindow : Window
         var dialog = new AddPlantWindow { Owner = this };
         if (dialog.ShowDialog() == true)
         {
-            var plant = new Plant { Name = dialog.PlantName, IntervalDays = dialog.IntervalDays };
+            var plant = new Plant
+            {
+                Name = dialog.PlantName,
+                IntervalDays = dialog.IntervalDays,
+                LastWatered = DateTime.Today.AddDays(-dialog.DaysSinceWatered),
+            };
             _plants.Add(new PlantItem(plant));
             Save();
         }

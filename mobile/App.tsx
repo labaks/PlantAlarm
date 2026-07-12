@@ -42,10 +42,12 @@ export default function App() {
     rescheduleAll(visiblePlants);
   }, [plants, loaded]);
 
-  const handleAdd = (name: string, intervalDays: number) => {
+  const handleAdd = (name: string, intervalDays: number, daysSinceWatered: number) => {
+    const lastWatered = new Date(today());
+    lastWatered.setDate(lastWatered.getDate() - daysSinceWatered);
     setPlants((prev) => [
       ...prev,
-      { id: generatePlantId(), name, intervalDays, lastWatered: formatDate(today()), updatedAt: nowMs() },
+      { id: generatePlantId(), name, intervalDays, lastWatered: formatDate(lastWatered), updatedAt: nowMs() },
     ]);
     setFormVisible(false);
   };

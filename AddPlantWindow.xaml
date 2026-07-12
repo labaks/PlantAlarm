@@ -22,7 +22,12 @@
                 <TextBox x:Name="NameBox" Style="{StaticResource DialogTextBoxStyle}" Margin="0,0,0,12"/>
 
                 <TextBlock Text="Поливать раз в (дней)" Foreground="#C8D8C8" Margin="0,0,0,4"/>
-                <TextBox x:Name="IntervalBox" Style="{StaticResource DialogTextBoxStyle}" Margin="0,0,0,8"/>
+                <TextBox x:Name="IntervalBox" Style="{StaticResource DialogTextBoxStyle}" Margin="0,0,0,12"/>
+
+                <StackPanel x:Name="DaysAgoPanel" Margin="0,0,0,8">
+                    <TextBlock Text="Дней с последнего полива" Foreground="#C8D8C8" Margin="0,0,0,4"/>
+                    <TextBox x:Name="DaysAgoBox" Style="{StaticResource DialogTextBoxStyle}"/>
+                </StackPanel>
 
                 <TextBlock x:Name="ErrorText" Foreground="#E0917B" FontSize="12" TextWrapping="Wrap"
                            Margin="0,0,0,8" Visibility="Collapsed"/>
