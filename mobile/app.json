@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "Полив цветов",
+    "slug": "plant-widget",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#1E2B1C",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.plantwidget.app"
+    },
+    "android": {
+      "package": "com.plantwidget.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#1E2B1C",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/android-icon-foreground.png",
+          "color": "#4CAF50"
+        }
+      ],
+      "expo-background-task",
+      "./plugins/withCleartextTraffic"
+    ]
+  }
+}

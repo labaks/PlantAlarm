@@ -1,0 +1,56 @@
+using System.Windows;
+using System.Windows.Input;
+
+namespace PlantWidget;
+
+public partial class AddPlantWindow : Window
+{
+    public string PlantName { get; private set; } = "";
+    public int IntervalDays { get; private set; } = 7;
+
+    public AddPlantWindow(string? name = null, int? intervalDays = null)
+    {
+        InitializeComponent();
+        TitleText.Text = name == null ? "Новый цветок" : "Редактировать цветок";
+        NameBox.Text = name ?? "";
+        IntervalBox.Text = (intervalDays ?? 7).ToString();
+        NameBox.Focus();
+    }
+
+    private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ButtonState == MouseButtonState.Pressed)
+            DragMove();
+    }
+
+    private void Save_Click(object sender, RoutedEventArgs e)
+    {
+        var name = NameBox.Text.Trim();
+        if (string.IsNullOrEmpty(name))
+        {
+            ShowError("Введите название растения.");
+            return;
+        }
+
+        if (!int.TryParse(IntervalBox.Text.Trim(), out var interval) || interval <= 0)
+        {
+            ShowError("Интервал должен быть положительным числом дней.");
+            return;
+        }
+
+        PlantName = name;
+        IntervalDays = interval;
+        DialogResult = true;
+    }
+
+    private void ShowError(string message)
+    {
+        ErrorText.Text = message;
+        ErrorText.Visibility = Visibility.Visible;
+    }
+
+    private void Cancel_Click(object sender, RoutedEventArgs e)
+    {
+        DialogResult = false;
+    }
+}
