@@ -33,6 +33,10 @@ yarn-error.*
 # local env files
 .env*.local
 
+# dev-session artifacts
+*.log
+connect-qr*.png
+
 # typescript
 *.tsbuildinfo
 
