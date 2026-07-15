@@ -1,3 +1,5 @@
+import { Language, formatDays, translate } from './i18n';
+
 export function generatePlantId(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
@@ -70,12 +72,12 @@ export function fillFraction(plant: Plant): number {
   return Math.min(1, Math.max(0, 1 - elapsed / plant.intervalDays));
 }
 
-export function statusText(plant: Plant): string {
+export function statusText(plant: Plant, language: Language): string {
   const days = daysLeft(plant);
-  if (days < 0) return `Просрочено на ${-days} дн.`;
-  if (days === 0) return 'Пора поливать!';
-  if (days === 1) return 'Завтра';
-  return `Через ${days} дн.`;
+  if (days < 0) return translate('status_overdue', language, formatDays(-days, language));
+  if (days === 0) return translate('status_due_today', language);
+  if (days === 1) return translate('status_tomorrow', language);
+  return translate('status_in_days', language, formatDays(days, language));
 }
 
 export function statusColor(plant: Plant): string {

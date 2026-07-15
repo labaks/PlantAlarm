@@ -35,6 +35,12 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         PlantsList.ItemsSource = _plants;
+        ApplyLocalization();
+        Strings.LanguageChanged += () =>
+        {
+            ApplyLocalization();
+            RefreshStatuses();
+        };
 
         var loaded = _store.Load();
         foreach (var plant in loaded.Where(p => !p.Deleted))
@@ -190,6 +196,14 @@ public partial class MainWindow : Window
             item.Refresh();
     }
 
+    private void ApplyLocalization()
+    {
+        Title = Strings.T("tray_text");
+        HeaderTitle.Text = "🌱 " + Strings.T("app_title");
+        SettingsButtonElement.ToolTip = Strings.T("settings_tooltip");
+        AddButtonElement.ToolTip = Strings.T("add_plant_tooltip");
+    }
+
     private void CheckReminders()
     {
         var today = DateTime.Today;
@@ -199,9 +213,9 @@ public partial class MainWindow : Window
             if (plant.DaysLeft <= 0 && plant.LastNotified != today)
             {
                 var text = plant.DaysLeft < 0
-                    ? $"{plant.Name}: просрочен полив на {-plant.DaysLeft} дн."
-                    : $"{plant.Name}: пора полить!";
-                App.ShowNotification("Полив цветов", text);
+                    ? Strings.NotifOverdue(plant.Name, -plant.DaysLeft)
+                    : Strings.NotifDue(plant.Name);
+                App.ShowNotification(Strings.T("tray_text"), text);
                 plant.LastNotified = today;
             }
         }
@@ -314,7 +328,7 @@ public partial class MainWindow : Window
     {
         if (((FrameworkElement)sender).DataContext is not PlantItem item) return;
 
-        var dialog = new ConfirmWindow($"Удалить «{item.Name}» из списка?") { Owner = this };
+        var dialog = new ConfirmWindow(Strings.T("delete_confirm_message", item.Name)) { Owner = this };
         if (dialog.ShowDialog() == true)
         {
             item.Plant.Deleted = true;
@@ -331,8 +345,8 @@ public partial class MainWindow : Window
 
         if (!item.IsWaterable)
         {
-            var days = item.Plant.DaysLeft;
-            var dialog = new ConfirmWindow($"До полива «{item.Name}» осталось {days} дн. Полить сейчас?", confirmText: "Полить") { Owner = this };
+            var message = Strings.WaterEarlyMessage(item.Name, item.Plant.DaysLeft);
+            var dialog = new ConfirmWindow(message, confirmText: Strings.T("water_button")) { Owner = this };
             if (dialog.ShowDialog() != true) return;
         }
 

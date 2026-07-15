@@ -10,8 +10,18 @@ import { loadPlants, savePlants } from './src/storage';
 import { registerBackgroundSync } from './src/backgroundSync';
 import { ensureNotificationPermission, rescheduleAll, setupNotificationChannel } from './src/notifications';
 import { Plant, daysLeft, formatDate, generatePlantId, isWaterable, nowMs, today } from './src/types';
+import { LanguageProvider, formatDays, useLanguage } from './src/i18n';
 
 export default function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
+  );
+}
+
+function AppContent() {
+  const { language, t } = useLanguage();
   const [plants, setPlants] = useState<Plant[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
@@ -23,7 +33,7 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      await setupNotificationChannel();
+      await setupNotificationChannel(language);
       await ensureNotificationPermission();
       const stored = await loadPlants();
       setPlants(stored);
@@ -31,7 +41,7 @@ export default function App() {
       await registerBackgroundSync();
     })();
 
-    const interval = setInterval(() => setTick((t) => t + 1), 5 * 60 * 1000);
+    const interval = setInterval(() => setTick((tick) => tick + 1), 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -40,8 +50,8 @@ export default function App() {
   useEffect(() => {
     if (!loaded) return;
     savePlants(plants);
-    rescheduleAll(visiblePlants);
-  }, [plants, loaded]);
+    rescheduleAll(visiblePlants, language);
+  }, [plants, loaded, language]);
 
   const handleAdd = (name: string, intervalDays: number, daysSinceWatered: number) => {
     const lastWatered = new Date(today());
@@ -101,7 +111,7 @@ export default function App() {
       <StatusBar barStyle="light-content" backgroundColor={theme.background} />
 
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>🌱 Мои цветы</Text>
+        <Text style={styles.headerTitle}>🌱 {t('app_title')}</Text>
         <Pressable hitSlop={8} onPress={() => setSyncSettingsVisible(true)}>
           <Text style={styles.headerAction}>⚙</Text>
         </Pressable>
@@ -119,9 +129,7 @@ export default function App() {
             onDelete={() => setDeletingPlant(item)}
           />
         )}
-        ListEmptyComponent={
-          <Text style={styles.empty}>Пока нет цветов — добавьте первый кнопкой «+».</Text>
-        }
+        ListEmptyComponent={<Text style={styles.empty}>{t('empty_list')}</Text>}
       />
 
       <Pressable style={styles.fab} onPress={() => setFormVisible(true)}>
@@ -145,7 +153,7 @@ export default function App() {
 
       <ConfirmModal
         visible={deletingPlant !== null}
-        message={`Удалить «${deletingPlant?.name}» из списка?`}
+        message={deletingPlant ? t('delete_confirm_message', deletingPlant.name) : ''}
         onCancel={() => setDeletingPlant(null)}
         onConfirm={handleDeleteConfirmed}
       />
@@ -154,10 +162,10 @@ export default function App() {
         visible={earlyWaterPlant !== null}
         message={
           earlyWaterPlant
-            ? `До полива «${earlyWaterPlant.name}» осталось ${daysLeft(earlyWaterPlant)} дн. Полить сейчас?`
+            ? t('water_early_message', earlyWaterPlant.name, formatDays(daysLeft(earlyWaterPlant), language))
             : ''
         }
-        confirmLabel="Полить"
+        confirmLabel={t('water_button')}
         onCancel={() => setEarlyWaterPlant(null)}
         onConfirm={handleEarlyWaterConfirmed}
       />

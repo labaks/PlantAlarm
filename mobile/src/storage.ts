@@ -1,8 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Plant } from './types';
+import type { Language } from './i18n';
 
 const KEY = 'plantwidget.plants';
 const SYNC_SETTINGS_KEY = 'plantwidget.syncSettings';
+const LANGUAGE_KEY = 'plantwidget.language';
 
 export async function loadPlants(): Promise<Plant[]> {
   try {
@@ -42,4 +44,17 @@ export async function loadSyncSettings(): Promise<SyncSettings> {
 
 export async function saveSyncSettings(settings: SyncSettings): Promise<void> {
   await AsyncStorage.setItem(SYNC_SETTINGS_KEY, JSON.stringify(settings));
+}
+
+export async function loadLanguage(): Promise<Language | null> {
+  try {
+    const raw = await AsyncStorage.getItem(LANGUAGE_KEY);
+    return raw === 'ru' || raw === 'en' ? raw : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function saveLanguage(language: Language): Promise<void> {
+  await AsyncStorage.setItem(LANGUAGE_KEY, language);
 }

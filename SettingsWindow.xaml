@@ -11,31 +11,35 @@
         <StackPanel>
             <!-- Header -->
             <Grid Margin="14,10,8,4" MouseLeftButtonDown="Header_MouseLeftButtonDown" Background="Transparent">
-                <TextBlock Text="Настройки" FontSize="14" FontWeight="Bold" Foreground="#E8F0E8" VerticalAlignment="Center"/>
+                <TextBlock x:Name="TitleText" FontSize="14" FontWeight="Bold" Foreground="#E8F0E8" VerticalAlignment="Center"/>
                 <Button Content="✕" Width="24" Height="24" HorizontalAlignment="Right"
                         Style="{StaticResource PlainIconButtonStyle}"
                         Click="Close_Click"/>
             </Grid>
 
             <StackPanel Margin="16,4,16,16">
-                <CheckBox x:Name="AlwaysOnTopBox" Content="Отображать поверх всех окон"
-                          Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,14"
+                <CheckBox x:Name="AlwaysOnTopBox" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,14"
                           Checked="AlwaysOnTopBox_Changed" Unchecked="AlwaysOnTopBox_Changed"/>
 
-                <CheckBox x:Name="AutostartBox" Content="Запускать при старте Windows"
-                          Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,14"
+                <CheckBox x:Name="AutostartBox" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,14"
                           Checked="AutostartBox_Changed" Unchecked="AutostartBox_Changed"/>
 
-                <CheckBox x:Name="AllowResizeBox" Content="Разрешить изменение размера окна"
-                          Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,18"
+                <CheckBox x:Name="AllowResizeBox" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,18"
                           Checked="AllowResizeBox_Changed" Unchecked="AllowResizeBox_Changed"/>
 
-                <TextBlock Text="Адрес для синхронизации с телефоном" Foreground="#C8D8C8" FontSize="12" Margin="0,0,0,4"/>
+                <TextBlock x:Name="LanguageLabel" Foreground="#C8D8C8" FontSize="12" Margin="0,0,0,4"/>
+                <ComboBox x:Name="LanguageComboBox" Style="{StaticResource DialogComboBoxStyle}" Margin="0,0,0,18"
+                          SelectionChanged="LanguageComboBox_SelectionChanged">
+                    <ComboBoxItem x:Name="LanguageRuItem" Content="Русский" Tag="ru"/>
+                    <ComboBoxItem x:Name="LanguageEnItem" Content="English" Tag="en"/>
+                </ComboBox>
+
+                <TextBlock x:Name="SyncAddressLabel" Foreground="#C8D8C8" FontSize="12" Margin="0,0,0,4"/>
                 <TextBox x:Name="SyncAddressBox" Style="{StaticResource DialogTextBoxStyle}" IsReadOnly="True" Margin="0,0,0,4"/>
-                <TextBlock Text="Введите этот адрес в настройках синхронизации мобильного приложения (оба устройства должны быть в одной Wi-Fi сети)."
+                <TextBlock x:Name="SyncAddressHint"
                            Foreground="#6E7D6E" FontSize="10" TextWrapping="Wrap" Margin="0,0,0,18"/>
 
-                <Button Content="Закрыть" Style="{StaticResource DialogButtonStyle}" HorizontalAlignment="Right" Click="Close_Click"/>
+                <Button x:Name="CloseButtonElement" Style="{StaticResource DialogButtonStyle}" HorizontalAlignment="Right" Click="Close_Click"/>
 
                 <TextBlock x:Name="VersionText" Foreground="#6E7D6E" FontSize="11"
                            HorizontalAlignment="Center" Margin="0,14,0,0"/>

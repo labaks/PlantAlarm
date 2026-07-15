@@ -25,7 +25,7 @@
 
             <!-- Header -->
             <Grid Grid.Row="0" Margin="12,10,8,6" Background="Transparent" MouseLeftButtonDown="Header_MouseLeftButtonDown">
-                <TextBlock Text="🌱 Мои цветы" FontSize="15" FontWeight="Bold" Foreground="#E8F0E8" VerticalAlignment="Center"/>
+                <TextBlock x:Name="HeaderTitle" FontSize="15" FontWeight="Bold" Foreground="#E8F0E8" VerticalAlignment="Center"/>
                 <Button Content="✕" Width="24" Height="24" HorizontalAlignment="Right"
                         Style="{StaticResource PlainIconButtonStyle}"
                         Click="HideButton_Click"/>
@@ -50,7 +50,7 @@
                                     </StackPanel>
                                     <Button Grid.Column="1" Width="30" Height="30" Margin="4,0"
                                             Style="{StaticResource WaterButtonStyle}"
-                                            Click="WaterButton_Click" ToolTip="Полил">
+                                            Click="WaterButton_Click" ToolTip="{Binding WaterTooltip}">
                                         <Grid Width="15" Height="15">
                                             <Path x:Name="DropOutline"
                                                   Data="M7,0 C7,0 0,8 0,13 C0,16.87 3.13,20 7,20 C10.87,20 14,16.87 14,13 C14,8 7,0 7,0 Z"
@@ -92,10 +92,10 @@
                     <StackPanel.RenderTransform>
                         <TranslateTransform x:Name="ActionsPanelTransform" Y="8"/>
                     </StackPanel.RenderTransform>
-                    <Button Content="⚙" Style="{StaticResource PanelIconButtonStyle}" FontSize="14" Margin="4,0"
-                            Click="SettingsButton_Click" ToolTip="Настройки"/>
-                    <Button Content="➕" Style="{StaticResource PanelIconButtonStyle}" FontSize="13" Margin="4,0"
-                            Click="AddButton_Click" ToolTip="Добавить цветок"/>
+                    <Button x:Name="SettingsButtonElement" Content="⚙" Style="{StaticResource PanelIconButtonStyle}" FontSize="14" Margin="4,0"
+                            Click="SettingsButton_Click"/>
+                    <Button x:Name="AddButtonElement" Content="➕" Style="{StaticResource PanelIconButtonStyle}" FontSize="13" Margin="4,0"
+                            Click="AddButton_Click"/>
                 </StackPanel>
 
                 <Border Grid.Row="1" HorizontalAlignment="Center"

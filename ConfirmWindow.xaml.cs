@@ -1,16 +1,18 @@
 using System.Windows;
 using System.Windows.Input;
+using PlantWidget.Services;
 
 namespace PlantWidget;
 
 public partial class ConfirmWindow : Window
 {
-    public ConfirmWindow(string message, string title = "Подтверждение", string confirmText = "Удалить")
+    public ConfirmWindow(string message, string? title = null, string? confirmText = null)
     {
         InitializeComponent();
-        TitleText.Text = title;
+        TitleText.Text = title ?? Strings.T("confirm_title");
         MessageText.Text = message;
-        ConfirmButtonText.Content = confirmText;
+        ConfirmButtonText.Content = confirmText ?? Strings.T("delete_button");
+        CancelButtonText.Content = Strings.T("cancel_button");
     }
 
     private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

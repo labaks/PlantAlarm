@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Plant, fillFraction, statusColor, statusText } from '../types';
 import { theme } from '../theme';
+import { useLanguage } from '../i18n';
 import { DropletIcon } from './DropletIcon';
 
 interface Props {
@@ -12,11 +13,13 @@ interface Props {
 }
 
 export function PlantRow({ plant, onWater, onEdit, onDelete }: Props) {
+  const { language } = useLanguage();
+
   return (
     <View style={styles.card}>
       <View style={styles.info}>
         <Text style={styles.name}>{plant.name}</Text>
-        <Text style={[styles.status, { color: statusColor(plant) }]}>{statusText(plant)}</Text>
+        <Text style={[styles.status, { color: statusColor(plant) }]}>{statusText(plant, language)}</Text>
       </View>
 
       <Pressable onPress={onWater} hitSlop={8} style={styles.iconButton}>

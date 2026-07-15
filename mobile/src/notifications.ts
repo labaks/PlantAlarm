@@ -1,6 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { Plant, nextWaterDate, today } from './types';
+import { Language, translate } from './i18n';
 
 const REMINDER_HOUR = 9;
 
@@ -20,10 +21,10 @@ export async function ensureNotificationPermission(): Promise<boolean> {
   return requested.status === 'granted';
 }
 
-export async function setupNotificationChannel(): Promise<void> {
+export async function setupNotificationChannel(language: Language): Promise<void> {
   if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync('watering', {
-      name: 'Напоминания о поливе',
+      name: translate('notif_channel_name', language),
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#4CAF50',
@@ -32,7 +33,7 @@ export async function setupNotificationChannel(): Promise<void> {
 }
 
 /** Cancels every scheduled reminder and re-schedules one per plant, based on current data. */
-export async function rescheduleAll(plants: Plant[]): Promise<void> {
+export async function rescheduleAll(plants: Plant[], language: Language): Promise<void> {
   await Notifications.cancelAllScheduledNotificationsAsync();
 
   for (const plant of plants) {
@@ -55,8 +56,8 @@ export async function rescheduleAll(plants: Plant[]): Promise<void> {
 
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: '🌱 Полив цветов',
-        body: `${plant.name}: пора полить!`,
+        title: `🌱 ${translate('notif_title', language)}`,
+        body: translate('notif_due_body', language, plant.name),
       },
       trigger,
     });

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { theme } from '../theme';
 import { daysBetween, parseDate, today } from '../types';
+import { useLanguage } from '../i18n';
 
 interface Props {
   visible: boolean;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function PlantFormModal({ visible, initialName, initialInterval, initialLastWatered, onCancel, onSave }: Props) {
+  const { t } = useLanguage();
   const [name, setName] = useState(initialName ?? '');
   const [interval, setInterval] = useState(String(initialInterval ?? 7));
   const [daysAgo, setDaysAgo] = useState('0');
@@ -30,17 +32,17 @@ export function PlantFormModal({ visible, initialName, initialInterval, initialL
   const handleSave = () => {
     const trimmedName = name.trim();
     if (!trimmedName) {
-      setError('Введите название растения.');
+      setError(t('err_name_required'));
       return;
     }
     const days = parseInt(interval.trim(), 10);
     if (!Number.isFinite(days) || days <= 0) {
-      setError('Интервал должен быть положительным числом дней.');
+      setError(t('err_interval_invalid'));
       return;
     }
     const daysAgoNum = parseInt(daysAgo.trim(), 10);
     if (!Number.isFinite(daysAgoNum) || daysAgoNum < 0) {
-      setError('Дней с последнего полива — число 0 или больше.');
+      setError(t('err_days_ago_invalid'));
       return;
     }
     onSave(trimmedName, days, daysAgoNum);
@@ -50,18 +52,18 @@ export function PlantFormModal({ visible, initialName, initialInterval, initialL
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
       <View style={styles.overlay}>
         <View style={styles.card}>
-          <Text style={styles.title}>{initialName ? 'Редактировать цветок' : 'Новый цветок'}</Text>
+          <Text style={styles.title}>{initialName ? t('edit_title') : t('add_title')}</Text>
 
-          <Text style={styles.label}>Название</Text>
+          <Text style={styles.label}>{t('name_label')}</Text>
           <TextInput
             style={styles.input}
             value={name}
             onChangeText={setName}
-            placeholder="Например, Фикус"
+            placeholder={t('name_placeholder')}
             placeholderTextColor={theme.textMuted}
           />
 
-          <Text style={styles.label}>Поливать раз в (дней)</Text>
+          <Text style={styles.label}>{t('interval_label')}</Text>
           <TextInput
             style={styles.input}
             value={interval}
@@ -69,7 +71,7 @@ export function PlantFormModal({ visible, initialName, initialInterval, initialL
             keyboardType="number-pad"
           />
 
-          <Text style={styles.label}>Дней с последнего полива</Text>
+          <Text style={styles.label}>{t('days_ago_label')}</Text>
           <TextInput
             style={styles.input}
             value={daysAgo}
@@ -81,10 +83,10 @@ export function PlantFormModal({ visible, initialName, initialInterval, initialL
 
           <View style={styles.buttons}>
             <Pressable style={styles.button} onPress={onCancel}>
-              <Text style={styles.buttonText}>Отмена</Text>
+              <Text style={styles.buttonText}>{t('cancel_button')}</Text>
             </Pressable>
             <Pressable style={styles.button} onPress={handleSave}>
-              <Text style={styles.buttonText}>Сохранить</Text>
+              <Text style={styles.buttonText}>{t('save_button')}</Text>
             </Pressable>
           </View>
         </View>

@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Media;
 using PlantWidget.Models;
+using PlantWidget.Services;
 
 namespace PlantWidget.ViewModels;
 
@@ -35,12 +36,14 @@ public class PlantItem : INotifyPropertyChanged
         get
         {
             var days = Plant.DaysLeft;
-            if (days < 0) return $"Просрочено на {-days} дн.";
-            if (days == 0) return "Пора поливать!";
-            if (days == 1) return "Завтра";
-            return $"Через {days} дн.";
+            if (days < 0) return Strings.StatusOverdue(-days);
+            if (days == 0) return Strings.T("status_due_today");
+            if (days == 1) return Strings.T("status_tomorrow");
+            return Strings.StatusInDays(days);
         }
     }
+
+    public string WaterTooltip => Strings.T("water_tooltip");
 
     public Brush StatusBrush
     {
@@ -88,6 +91,7 @@ public class PlantItem : INotifyPropertyChanged
         OnPropertyChanged(nameof(StatusBrush));
         OnPropertyChanged(nameof(IsWaterable));
         OnPropertyChanged(nameof(FillFraction));
+        OnPropertyChanged(nameof(WaterTooltip));
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

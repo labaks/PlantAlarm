@@ -21,7 +21,7 @@
                 <TextBlock x:Name="MessageText" Foreground="#C8D8C8" TextWrapping="Wrap" Margin="0,0,0,16"/>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="Отмена" Style="{StaticResource DialogButtonStyle}" Margin="0,0,8,0" Click="No_Click"/>
+                    <Button x:Name="CancelButtonText" Content="Отмена" Style="{StaticResource DialogButtonStyle}" Margin="0,0,8,0" Click="No_Click"/>
                     <Button x:Name="ConfirmButtonText" Content="Удалить" Style="{StaticResource DialogButtonStyle}" Click="Yes_Click" IsDefault="True"/>
                 </StackPanel>
             </StackPanel>

@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Input;
+using PlantWidget.Services;
 
 namespace PlantWidget;
 
@@ -15,7 +16,12 @@ public partial class AddPlantWindow : Window
     {
         InitializeComponent();
         _isNewPlant = name == null;
-        TitleText.Text = _isNewPlant ? "Новый цветок" : "Редактировать цветок";
+        TitleText.Text = Strings.T(_isNewPlant ? "add_title" : "edit_title");
+        NameLabel.Text = Strings.T("name_label");
+        IntervalLabel.Text = Strings.T("interval_label");
+        DaysAgoLabel.Text = Strings.T("days_ago_label");
+        CancelButtonElement.Content = Strings.T("cancel_button");
+        SaveButtonElement.Content = Strings.T("save_button");
         NameBox.Text = name ?? "";
         IntervalBox.Text = (intervalDays ?? 7).ToString();
         DaysAgoBox.Text = (daysSinceWatered ?? 0).ToString();
@@ -33,19 +39,19 @@ public partial class AddPlantWindow : Window
         var name = NameBox.Text.Trim();
         if (string.IsNullOrEmpty(name))
         {
-            ShowError("Введите название растения.");
+            ShowError(Strings.T("err_name_required"));
             return;
         }
 
         if (!int.TryParse(IntervalBox.Text.Trim(), out var interval) || interval <= 0)
         {
-            ShowError("Интервал должен быть положительным числом дней.");
+            ShowError(Strings.T("err_interval_invalid"));
             return;
         }
 
         if (!int.TryParse(DaysAgoBox.Text.Trim(), out var daysAgo) || daysAgo < 0)
         {
-            ShowError("Дней с последнего полива — число 0 или больше.");
+            ShowError(Strings.T("err_days_ago_invalid"));
             return;
         }
 

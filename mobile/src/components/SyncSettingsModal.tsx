@@ -5,6 +5,8 @@ import { loadSyncSettings, saveSyncSettings, SyncSettings } from '../storage';
 import { testConnection } from '../sync';
 import { performSync, SyncOutcome } from '../backgroundSync';
 import { Plant } from '../types';
+import { Language, useLanguage } from '../i18n';
+import { Select } from './Select';
 
 interface Props {
   visible: boolean;
@@ -12,25 +14,26 @@ interface Props {
   onSynced: (plants: Plant[]) => void;
 }
 
-function describeOutcome(outcome: SyncOutcome): string {
+function describeOutcome(outcome: SyncOutcome, t: (key: string) => string): string {
   switch (outcome.status) {
     case 'synced':
-      return 'Синхронизировано успешно.';
+      return t('sync_status_synced');
     case 'unreachable':
-      return 'Не удалось подключиться к десктопу. Убедитесь, что оба устройства в одной Wi-Fi сети.';
+      return t('sync_status_unreachable');
     case 'not-configured':
-      return 'Сначала укажите и сохраните адрес десктопа.';
+      return t('sync_status_not_configured');
     case 'skipped-too-soon':
-      return 'Уже синхронизировали недавно.';
+      return t('sync_status_skipped');
   }
 }
 
-function formatLastSync(lastSyncAt: number | null): string {
-  if (!lastSyncAt) return 'ещё не выполнялась';
+function formatLastSync(lastSyncAt: number | null, t: (key: string) => string): string {
+  if (!lastSyncAt) return t('sync_never');
   return new Date(lastSyncAt).toLocaleString();
 }
 
 export function SyncSettingsModal({ visible, onClose, onSynced }: Props) {
+  const { language, setLanguage, t } = useLanguage();
   const [host, setHost] = useState('');
   const [port, setPort] = useState('8787');
   const [lastSyncAt, setLastSyncAt] = useState<number | null>(null);
@@ -56,28 +59,28 @@ export function SyncSettingsModal({ visible, onClose, onSynced }: Props) {
 
   const handleSave = async () => {
     await saveSyncSettings(currentSettings());
-    setStatusMessage('Адрес сохранён.');
+    setStatusMessage(t('sync_status_saved'));
   };
 
   const handleTest = async () => {
     const settings = currentSettings();
     if (!settings.host) {
-      setStatusMessage('Введите IP-адрес десктопа.');
+      setStatusMessage(t('sync_status_enter_ip'));
       return;
     }
     setBusy(true);
-    setStatusMessage('Проверяем соединение…');
+    setStatusMessage(t('sync_status_testing'));
     const ok = await testConnection(settings.host, settings.port);
-    setStatusMessage(ok ? 'Десктоп найден ✓' : 'Не отвечает. Проверьте адрес и сеть.');
+    setStatusMessage(ok ? t('sync_status_found') : t('sync_status_not_responding'));
     setBusy(false);
   };
 
   const handleSyncNow = async () => {
     await saveSyncSettings(currentSettings());
     setBusy(true);
-    setStatusMessage('Синхронизация…');
+    setStatusMessage(t('sync_syncing'));
     const outcome = await performSync(true);
-    setStatusMessage(describeOutcome(outcome));
+    setStatusMessage(describeOutcome(outcome, t));
     if (outcome.status === 'synced' && outcome.plants) {
       setLastSyncAt(Date.now());
       onSynced(outcome.plants);
@@ -89,20 +92,32 @@ export function SyncSettingsModal({ visible, onClose, onSynced }: Props) {
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={styles.card}>
-          <Text style={styles.title}>Синхронизация с десктопом</Text>
+          <Text style={styles.title}>{t('sync_title')}</Text>
 
-          <Text style={styles.label}>IP-адрес десктопа</Text>
+          <Text style={styles.label}>{t('language_label')}</Text>
+          <View style={styles.selectWrap}>
+            <Select
+              value={language}
+              options={[
+                { label: 'Русский', value: 'ru' },
+                { label: 'English', value: 'en' },
+              ]}
+              onChange={(lang) => setLanguage(lang as Language)}
+            />
+          </View>
+
+          <Text style={styles.label}>{t('sync_host_label')}</Text>
           <TextInput
             style={styles.input}
             value={host}
             onChangeText={setHost}
-            placeholder="Например, 192.168.1.23"
+            placeholder={t('sync_host_placeholder')}
             placeholderTextColor={theme.textMuted}
             autoCapitalize="none"
             keyboardType="numbers-and-punctuation"
           />
 
-          <Text style={styles.label}>Порт</Text>
+          <Text style={styles.label}>{t('sync_port_label')}</Text>
           <TextInput
             style={styles.input}
             value={port}
@@ -110,30 +125,27 @@ export function SyncSettingsModal({ visible, onClose, onSynced }: Props) {
             keyboardType="number-pad"
           />
 
-          <Text style={styles.hint}>
-            Адрес и порт показаны в настройках десктопного виджета. Синхронизация работает,
-            только пока оба устройства в одной локальной сети; в фоне выполняется примерно раз в сутки.
-          </Text>
+          <Text style={styles.hint}>{t('sync_hint')}</Text>
 
-          <Text style={styles.lastSync}>Последняя синхронизация: {formatLastSync(lastSyncAt)}</Text>
+          <Text style={styles.lastSync}>{t('sync_last_label', formatLastSync(lastSyncAt, t))}</Text>
 
           {statusMessage ? <Text style={styles.status}>{statusMessage}</Text> : null}
 
           <View style={styles.buttons}>
             <Pressable style={styles.button} onPress={handleTest} disabled={busy}>
-              <Text style={styles.buttonText}>Проверить</Text>
+              <Text style={styles.buttonText}>{t('sync_test_button')}</Text>
             </Pressable>
             <Pressable style={styles.button} onPress={handleSyncNow} disabled={busy}>
-              <Text style={styles.buttonText}>Синхронизировать сейчас</Text>
+              <Text style={styles.buttonText}>{t('sync_now_button')}</Text>
             </Pressable>
           </View>
 
           <View style={styles.buttons}>
             <Pressable style={styles.button} onPress={onClose}>
-              <Text style={styles.buttonText}>Закрыть</Text>
+              <Text style={styles.buttonText}>{t('close_button')}</Text>
             </Pressable>
             <Pressable style={styles.button} onPress={handleSave}>
-              <Text style={styles.buttonText}>Сохранить</Text>
+              <Text style={styles.buttonText}>{t('save_button')}</Text>
             </Pressable>
           </View>
         </View>
@@ -209,5 +221,8 @@ const styles = StyleSheet.create({
   buttonText: {
     color: theme.textSecondary,
     fontSize: 13,
+  },
+  selectWrap: {
+    marginBottom: 12,
   },
 });

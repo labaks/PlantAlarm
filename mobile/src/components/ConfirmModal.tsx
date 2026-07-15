@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { theme } from '../theme';
+import { useLanguage } from '../i18n';
 
 interface Props {
   visible: boolean;
@@ -10,19 +11,20 @@ interface Props {
   onConfirm: () => void;
 }
 
-export function ConfirmModal({ visible, message, confirmLabel = 'Удалить', onCancel, onConfirm }: Props) {
+export function ConfirmModal({ visible, message, confirmLabel, onCancel, onConfirm }: Props) {
+  const { t } = useLanguage();
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
       <View style={styles.overlay}>
         <View style={styles.card}>
-          <Text style={styles.title}>Подтверждение</Text>
+          <Text style={styles.title}>{t('confirm_title')}</Text>
           <Text style={styles.message}>{message}</Text>
           <View style={styles.buttons}>
             <Pressable style={styles.button} onPress={onCancel}>
-              <Text style={styles.buttonText}>Отмена</Text>
+              <Text style={styles.buttonText}>{t('cancel_button')}</Text>
             </Pressable>
             <Pressable style={styles.button} onPress={onConfirm}>
-              <Text style={styles.buttonText}>{confirmLabel}</Text>
+              <Text style={styles.buttonText}>{confirmLabel ?? t('delete_button')}</Text>
             </Pressable>
           </View>
         </View>

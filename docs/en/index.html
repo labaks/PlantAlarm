@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Plant Alarm — напоминание о поливе для Windows и Android</title>
-<meta name="description" content="Виджет для Windows и приложение для Android, которые напоминают полить растения — с синхронизацией по локальной сети.">
-<link rel="icon" type="image/png" href="icon.png">
+<title>Plant Alarm — a watering reminder for Windows and Android</title>
+<meta name="description" content="A Windows widget and Android app that remind you to water your plants — synced over your local network.">
+<link rel="icon" type="image/png" href="../icon.png">
 <style>
   :root {
     --bg: #1E2B1C;
@@ -232,37 +232,37 @@
 
 <div class="lang-switch">
   <select onchange="if (this.value) location.href = this.value">
-    <option value="" selected>🇷🇺 Русский</option>
-    <option value="en/">🇬🇧 English</option>
+    <option value="../">🇷🇺 Русский</option>
+    <option value="" selected>🇬🇧 English</option>
   </select>
 </div>
 
 <header class="hero">
   <div class="wrap">
-    <img class="logo" src="icon.png" alt="Plant Alarm">
+    <img class="logo" src="../icon.png" alt="Plant Alarm">
     <h1>Plant Alarm</h1>
     <p class="tagline">
-      Виджет для Windows и приложение для Android, которые напоминают полить растения —
-      с синхронизацией между телефоном и десктопом по локальной сети, без облака и аккаунтов.
+      A Windows widget and Android app that remind you to water your plants —
+      synced between your phone and desktop over the local network, no cloud, no accounts.
     </p>
     <div class="cta">
-      <a class="btn primary" href="https://github.com/labaks/PlantAlarm/releases">Скачать</a>
-      <a class="btn secondary" href="https://github.com/labaks/PlantAlarm">Исходный код на GitHub</a>
+      <a class="btn primary" href="https://github.com/labaks/PlantAlarm/releases">Download</a>
+      <a class="btn secondary" href="https://github.com/labaks/PlantAlarm">Source on GitHub</a>
     </div>
   </div>
 </header>
 
 <section>
   <div class="wrap">
-    <h2>Как это выглядит</h2>
+    <h2>What it looks like</h2>
     <div class="screens">
       <figure>
-        <img src="screenshots/desktop.png" alt="Десктоп-виджет Plant Alarm">
-        <figcaption>Десктоп-виджет (Windows)</figcaption>
+        <img src="../screenshots/desktop-en.png" alt="Plant Alarm desktop widget">
+        <figcaption>Desktop widget (Windows)</figcaption>
       </figure>
       <figure>
-        <img src="screenshots/mobile.png" alt="Мобильное приложение Plant Alarm">
-        <figcaption>Мобильное приложение (Android)</figcaption>
+        <img src="../screenshots/mobile-en.png" alt="Plant Alarm mobile app">
+        <figcaption>Mobile app (Android)</figcaption>
       </figure>
     </div>
   </div>
@@ -270,37 +270,37 @@
 
 <section>
   <div class="wrap">
-    <h2>Возможности</h2>
+    <h2>Features</h2>
     <div class="features">
       <div class="feature">
         <div class="icon">💧</div>
-        <h3>Капля-индикатор</h3>
-        <p>Показывает, сколько «воды» осталось до следующего полива, и постепенно пустеет к сроку — на глаз видно, кому пора.</p>
+        <h3>Droplet indicator</h3>
+        <p>Shows how much "water" is left until the next watering, gradually emptying as the due date approaches — you can tell who needs it at a glance.</p>
       </div>
       <div class="feature">
         <div class="icon">✅</div>
-        <h3>Полить в любой момент</h3>
-        <p>Кнопка «Полить» активна всегда. Если поливаете раньше срока — приложение переспросит, а не заблокирует кнопку.</p>
+        <h3>Water any time</h3>
+        <p>The "Water" button is always active. Water early, and the app just double-checks instead of blocking the button.</p>
       </div>
       <div class="feature">
         <div class="icon">📅</div>
-        <h3>Своя дата полива</h3>
-        <p>Дату последнего полива можно указать при добавлении растения и поправить позже в редактировании.</p>
+        <h3>Your own watering date</h3>
+        <p>Set the last-watered date when adding a plant, and correct it later from the edit screen.</p>
       </div>
       <div class="feature">
         <div class="icon">🔔</div>
-        <h3>Push-уведомления</h3>
-        <p>Телефон напомнит, когда придёт время полива, даже если приложение закрыто.</p>
+        <h3>Push notifications</h3>
+        <p>Your phone reminds you when it's time to water, even if the app is closed.</p>
       </div>
       <div class="feature">
         <div class="icon">🔄</div>
-        <h3>Синхронизация по Wi-Fi</h3>
-        <p>Телефон и десктоп сверяют списки растений по локальной сети — двустороннее слияние изменений, без облака.</p>
+        <h3>Wi-Fi sync</h3>
+        <p>Your phone and desktop reconcile plant lists over the local network — two-way merge, no cloud involved.</p>
       </div>
       <div class="feature">
         <div class="icon">⏱️</div>
-        <h3>Свой интервал на растение</h3>
-        <p>У каждого растения — собственный график полива в днях, а не общий для всех.</p>
+        <h3>Per-plant interval</h3>
+        <p>Each plant gets its own watering schedule in days, instead of one schedule for everything.</p>
       </div>
     </div>
   </div>
@@ -308,19 +308,19 @@
 
 <section>
   <div class="wrap">
-    <h2>Скачать</h2>
+    <h2>Download</h2>
     <div class="platforms">
       <div class="platform">
-        <h3>🖥️ Десктоп (Windows)</h3>
-        <p>Готовый <code>.exe</code>, .NET на компьютере не нужен — на странице релизов.</p>
+        <h3>🖥️ Desktop (Windows)</h3>
+        <p>A ready-to-run <code>.exe</code>, no .NET install required — on the releases page.</p>
       </div>
       <div class="platform">
-        <h3>📱 Мобильное (Android)</h3>
-        <p>Готовый <code>.apk</code> — там же, на странице релизов.</p>
+        <h3>📱 Mobile (Android)</h3>
+        <p>A ready-to-install <code>.apk</code> — same place, on the releases page.</p>
       </div>
     </div>
     <div class="cta" style="margin-top: 32px;">
-      <a class="btn primary" href="https://github.com/labaks/PlantAlarm/releases">Все релизы на GitHub</a>
+      <a class="btn primary" href="https://github.com/labaks/PlantAlarm/releases">All releases on GitHub</a>
     </div>
   </div>
 </section>
