@@ -5,11 +5,12 @@ namespace PlantWidget;
 
 public partial class ConfirmWindow : Window
 {
-    public ConfirmWindow(string message, string title = "Подтверждение")
+    public ConfirmWindow(string message, string title = "Подтверждение", string confirmText = "Удалить")
     {
         InitializeComponent();
         TitleText.Text = title;
         MessageText.Text = message;
+        ConfirmButtonText.Content = confirmText;
     }
 
     private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

@@ -299,11 +299,13 @@ public partial class MainWindow : Window
     {
         if (((FrameworkElement)sender).DataContext is not PlantItem item) return;
 
-        var dialog = new AddPlantWindow(item.Name, item.IntervalDays) { Owner = this };
+        var daysSinceWatered = (DateTime.Today - item.Plant.LastWatered.Date).Days;
+        var dialog = new AddPlantWindow(item.Name, item.IntervalDays, daysSinceWatered) { Owner = this };
         if (dialog.ShowDialog() == true)
         {
             item.Name = dialog.PlantName;
             item.IntervalDays = dialog.IntervalDays;
+            item.SetLastWatered(DateTime.Today.AddDays(-dialog.DaysSinceWatered));
             Save();
         }
     }
@@ -326,6 +328,13 @@ public partial class MainWindow : Window
     private void WaterButton_Click(object sender, RoutedEventArgs e)
     {
         if (((FrameworkElement)sender).DataContext is not PlantItem item) return;
+
+        if (!item.IsWaterable)
+        {
+            var days = item.Plant.DaysLeft;
+            var dialog = new ConfirmWindow($"До полива «{item.Name}» осталось {days} дн. Полить сейчас?", confirmText: "Полить") { Owner = this };
+            if (dialog.ShowDialog() != true) return;
+        }
 
         item.MarkWatered();
         Save();

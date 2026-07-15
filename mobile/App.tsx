@@ -9,7 +9,7 @@ import { theme } from './src/theme';
 import { loadPlants, savePlants } from './src/storage';
 import { registerBackgroundSync } from './src/backgroundSync';
 import { ensureNotificationPermission, rescheduleAll, setupNotificationChannel } from './src/notifications';
-import { Plant, formatDate, generatePlantId, nowMs, today } from './src/types';
+import { Plant, daysLeft, formatDate, generatePlantId, isWaterable, nowMs, today } from './src/types';
 
 export default function App() {
   const [plants, setPlants] = useState<Plant[]>([]);
@@ -17,6 +17,7 @@ export default function App() {
   const [formVisible, setFormVisible] = useState(false);
   const [editingPlant, setEditingPlant] = useState<Plant | null>(null);
   const [deletingPlant, setDeletingPlant] = useState<Plant | null>(null);
+  const [earlyWaterPlant, setEarlyWaterPlant] = useState<Plant | null>(null);
   const [syncSettingsVisible, setSyncSettingsVisible] = useState(false);
   const [, setTick] = useState(0);
 
@@ -52,9 +53,15 @@ export default function App() {
     setFormVisible(false);
   };
 
-  const handleEditSave = (name: string, intervalDays: number) => {
+  const handleEditSave = (name: string, intervalDays: number, daysSinceWatered: number) => {
+    const lastWatered = new Date(today());
+    lastWatered.setDate(lastWatered.getDate() - daysSinceWatered);
     setPlants((prev) =>
-      prev.map((p) => (p.id === editingPlant!.id ? { ...p, name, intervalDays, updatedAt: nowMs() } : p)),
+      prev.map((p) =>
+        p.id === editingPlant!.id
+          ? { ...p, name, intervalDays, lastWatered: formatDate(lastWatered), updatedAt: nowMs() }
+          : p,
+      ),
     );
     setEditingPlant(null);
   };
@@ -76,6 +83,19 @@ export default function App() {
     setDeletingPlant(null);
   };
 
+  const handleWaterPress = (plant: Plant) => {
+    if (isWaterable(plant)) {
+      handleWater(plant);
+    } else {
+      setEarlyWaterPlant(plant);
+    }
+  };
+
+  const handleEarlyWaterConfirmed = () => {
+    handleWater(earlyWaterPlant!);
+    setEarlyWaterPlant(null);
+  };
+
   return (
     <View style={styles.root}>
       <StatusBar barStyle="light-content" backgroundColor={theme.background} />
@@ -94,7 +114,7 @@ export default function App() {
         renderItem={({ item }) => (
           <PlantRow
             plant={item}
-            onWater={() => handleWater(item)}
+            onWater={() => handleWaterPress(item)}
             onEdit={() => setEditingPlant(item)}
             onDelete={() => setDeletingPlant(item)}
           />
@@ -118,6 +138,7 @@ export default function App() {
         visible={editingPlant !== null}
         initialName={editingPlant?.name}
         initialInterval={editingPlant?.intervalDays}
+        initialLastWatered={editingPlant?.lastWatered}
         onCancel={() => setEditingPlant(null)}
         onSave={handleEditSave}
       />
@@ -127,6 +148,18 @@ export default function App() {
         message={`Удалить «${deletingPlant?.name}» из списка?`}
         onCancel={() => setDeletingPlant(null)}
         onConfirm={handleDeleteConfirmed}
+      />
+
+      <ConfirmModal
+        visible={earlyWaterPlant !== null}
+        message={
+          earlyWaterPlant
+            ? `До полива «${earlyWaterPlant.name}» осталось ${daysLeft(earlyWaterPlant)} дн. Полить сейчас?`
+            : ''
+        }
+        confirmLabel="Полить"
+        onCancel={() => setEarlyWaterPlant(null)}
+        onConfirm={handleEarlyWaterConfirmed}
       />
 
       <SyncSettingsModal

@@ -65,9 +65,9 @@ export function isWaterable(plant: Plant): boolean {
 }
 
 export function fillFraction(plant: Plant): number {
-  if (plant.intervalDays <= 0) return 1;
+  if (plant.intervalDays <= 0) return 0;
   const elapsed = daysBetween(parseDate(plant.lastWatered), today());
-  return Math.min(1, Math.max(0, elapsed / plant.intervalDays));
+  return Math.min(1, Math.max(0, 1 - elapsed / plant.intervalDays));
 }
 
 export function statusText(plant: Plant): string {

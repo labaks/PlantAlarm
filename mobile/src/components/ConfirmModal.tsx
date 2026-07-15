@@ -5,11 +5,12 @@ import { theme } from '../theme';
 interface Props {
   visible: boolean;
   message: string;
+  confirmLabel?: string;
   onCancel: () => void;
   onConfirm: () => void;
 }
 
-export function ConfirmModal({ visible, message, onCancel, onConfirm }: Props) {
+export function ConfirmModal({ visible, message, confirmLabel = 'Удалить', onCancel, onConfirm }: Props) {
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
       <View style={styles.overlay}>
@@ -21,7 +22,7 @@ export function ConfirmModal({ visible, message, onCancel, onConfirm }: Props) {
               <Text style={styles.buttonText}>Отмена</Text>
             </Pressable>
             <Pressable style={styles.button} onPress={onConfirm}>
-              <Text style={styles.buttonText}>Удалить</Text>
+              <Text style={styles.buttonText}>{confirmLabel}</Text>
             </Pressable>
           </View>
         </View>

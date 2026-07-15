@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Plant, fillFraction, isWaterable, statusColor, statusText } from '../types';
+import { Plant, fillFraction, statusColor, statusText } from '../types';
 import { theme } from '../theme';
 import { DropletIcon } from './DropletIcon';
 
@@ -12,8 +12,6 @@ interface Props {
 }
 
 export function PlantRow({ plant, onWater, onEdit, onDelete }: Props) {
-  const waterable = isWaterable(plant);
-
   return (
     <View style={styles.card}>
       <View style={styles.info}>
@@ -21,17 +19,8 @@ export function PlantRow({ plant, onWater, onEdit, onDelete }: Props) {
         <Text style={[styles.status, { color: statusColor(plant) }]}>{statusText(plant)}</Text>
       </View>
 
-      <Pressable
-        onPress={onWater}
-        disabled={!waterable}
-        hitSlop={8}
-        style={[styles.iconButton, !waterable && styles.iconButtonDisabled]}
-      >
-        <DropletIcon
-          size={18}
-          fraction={fillFraction(plant)}
-          color={waterable ? theme.water : theme.water}
-        />
+      <Pressable onPress={onWater} hitSlop={8} style={styles.iconButton}>
+        <DropletIcon size={18} fraction={fillFraction(plant)} color={theme.water} />
       </Pressable>
 
       <Pressable onPress={onEdit} hitSlop={8} style={styles.iconButton}>
@@ -72,9 +61,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 4,
-  },
-  iconButtonDisabled: {
-    opacity: 0.9,
   },
   iconGlyph: {
     color: theme.textSecondary,

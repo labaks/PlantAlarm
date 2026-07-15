@@ -50,7 +50,6 @@
                                     </StackPanel>
                                     <Button Grid.Column="1" Width="30" Height="30" Margin="4,0"
                                             Style="{StaticResource WaterButtonStyle}"
-                                            IsEnabled="{Binding IsWaterable}"
                                             Click="WaterButton_Click" ToolTip="Полил">
                                         <Grid Width="15" Height="15">
                                             <Path x:Name="DropOutline"

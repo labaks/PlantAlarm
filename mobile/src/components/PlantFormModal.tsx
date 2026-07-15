@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { theme } from '../theme';
+import { daysBetween, parseDate, today } from '../types';
 
 interface Props {
   visible: boolean;
   initialName?: string;
   initialInterval?: number;
+  initialLastWatered?: string;
   onCancel: () => void;
   onSave: (name: string, intervalDays: number, daysSinceWatered: number) => void;
 }
 
-export function PlantFormModal({ visible, initialName, initialInterval, onCancel, onSave }: Props) {
-  const isNewPlant = !initialName;
+export function PlantFormModal({ visible, initialName, initialInterval, initialLastWatered, onCancel, onSave }: Props) {
   const [name, setName] = useState(initialName ?? '');
   const [interval, setInterval] = useState(String(initialInterval ?? 7));
   const [daysAgo, setDaysAgo] = useState('0');
@@ -21,10 +22,10 @@ export function PlantFormModal({ visible, initialName, initialInterval, onCancel
     if (visible) {
       setName(initialName ?? '');
       setInterval(String(initialInterval ?? 7));
-      setDaysAgo('0');
+      setDaysAgo(String(initialLastWatered ? daysBetween(parseDate(initialLastWatered), today()) : 0));
       setError('');
     }
-  }, [visible, initialName, initialInterval]);
+  }, [visible, initialName, initialInterval, initialLastWatered]);
 
   const handleSave = () => {
     const trimmedName = name.trim();
@@ -68,17 +69,13 @@ export function PlantFormModal({ visible, initialName, initialInterval, onCancel
             keyboardType="number-pad"
           />
 
-          {isNewPlant && (
-            <>
-              <Text style={styles.label}>Дней с последнего полива</Text>
-              <TextInput
-                style={styles.input}
-                value={daysAgo}
-                onChangeText={setDaysAgo}
-                keyboardType="number-pad"
-              />
-            </>
-          )}
+          <Text style={styles.label}>Дней с последнего полива</Text>
+          <TextInput
+            style={styles.input}
+            value={daysAgo}
+            onChangeText={setDaysAgo}
+            keyboardType="number-pad"
+          />
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 

@@ -59,9 +59,9 @@ public class PlantItem : INotifyPropertyChanged
     {
         get
         {
-            if (Plant.IntervalDays <= 0) return 1.0;
+            if (Plant.IntervalDays <= 0) return 0.0;
             var elapsedDays = (DateTime.Today - Plant.LastWatered.Date).TotalDays;
-            return Math.Clamp(elapsedDays / Plant.IntervalDays, 0.0, 1.0);
+            return Math.Clamp(1 - elapsedDays / Plant.IntervalDays, 0.0, 1.0);
         }
     }
 
@@ -69,6 +69,14 @@ public class PlantItem : INotifyPropertyChanged
     {
         Plant.LastWatered = DateTime.Today;
         Plant.LastNotified = null;
+        Plant.UpdatedAt = DateTime.UtcNow;
+        OnPropertyChanged(nameof(LastWatered));
+        Refresh();
+    }
+
+    public void SetLastWatered(DateTime date)
+    {
+        Plant.LastWatered = date;
         Plant.UpdatedAt = DateTime.UtcNow;
         OnPropertyChanged(nameof(LastWatered));
         Refresh();

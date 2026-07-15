@@ -11,15 +11,14 @@ public partial class AddPlantWindow : Window
     public int IntervalDays { get; private set; } = 7;
     public int DaysSinceWatered { get; private set; } = 0;
 
-    public AddPlantWindow(string? name = null, int? intervalDays = null)
+    public AddPlantWindow(string? name = null, int? intervalDays = null, int? daysSinceWatered = null)
     {
         InitializeComponent();
         _isNewPlant = name == null;
         TitleText.Text = _isNewPlant ? "Новый цветок" : "Редактировать цветок";
         NameBox.Text = name ?? "";
         IntervalBox.Text = (intervalDays ?? 7).ToString();
-        DaysAgoBox.Text = "0";
-        DaysAgoPanel.Visibility = _isNewPlant ? Visibility.Visible : Visibility.Collapsed;
+        DaysAgoBox.Text = (daysSinceWatered ?? 0).ToString();
         NameBox.Focus();
     }
 
@@ -44,8 +43,7 @@ public partial class AddPlantWindow : Window
             return;
         }
 
-        var daysAgo = 0;
-        if (_isNewPlant && (!int.TryParse(DaysAgoBox.Text.Trim(), out daysAgo) || daysAgo < 0))
+        if (!int.TryParse(DaysAgoBox.Text.Trim(), out var daysAgo) || daysAgo < 0)
         {
             ShowError("Дней с последнего полива — число 0 или больше.");
             return;
