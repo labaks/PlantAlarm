@@ -57,6 +57,7 @@ const TABLE: Record<string, [string, string]> = {
   sync_status_not_responding: ['Не отвечает. Проверьте адрес и сеть.', 'Not responding. Check the address and network.'],
   sync_syncing: ['Синхронизация…', 'Syncing…'],
 
+  settings_title: ['Настройки', 'Settings'],
   language_label: ['Язык', 'Language'],
 
   notif_channel_name: ['Напоминания о поливе', 'Watering reminders'],

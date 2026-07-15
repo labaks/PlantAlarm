@@ -4,6 +4,7 @@ import { FlatList, Pressable, StatusBar, StyleSheet, Text, View } from 'react-na
 import { PlantRow } from './src/components/PlantRow';
 import { PlantFormModal } from './src/components/PlantFormModal';
 import { ConfirmModal } from './src/components/ConfirmModal';
+import { SettingsModal } from './src/components/SettingsModal';
 import { SyncSettingsModal } from './src/components/SyncSettingsModal';
 import { theme } from './src/theme';
 import { loadPlants, savePlants } from './src/storage';
@@ -28,6 +29,7 @@ function AppContent() {
   const [editingPlant, setEditingPlant] = useState<Plant | null>(null);
   const [deletingPlant, setDeletingPlant] = useState<Plant | null>(null);
   const [earlyWaterPlant, setEarlyWaterPlant] = useState<Plant | null>(null);
+  const [settingsVisible, setSettingsVisible] = useState(false);
   const [syncSettingsVisible, setSyncSettingsVisible] = useState(false);
   const [, setTick] = useState(0);
 
@@ -112,7 +114,7 @@ function AppContent() {
 
       <View style={styles.header}>
         <Text style={styles.headerTitle}>🌱 {t('app_title')}</Text>
-        <Pressable hitSlop={8} onPress={() => setSyncSettingsVisible(true)}>
+        <Pressable hitSlop={8} onPress={() => setSettingsVisible(true)}>
           <Text style={styles.headerAction}>⚙</Text>
         </Pressable>
       </View>
@@ -168,6 +170,12 @@ function AppContent() {
         confirmLabel={t('water_button')}
         onCancel={() => setEarlyWaterPlant(null)}
         onConfirm={handleEarlyWaterConfirmed}
+      />
+
+      <SettingsModal
+        visible={settingsVisible}
+        onClose={() => setSettingsVisible(false)}
+        onOpenSync={() => setSyncSettingsVisible(true)}
       />
 
       <SyncSettingsModal

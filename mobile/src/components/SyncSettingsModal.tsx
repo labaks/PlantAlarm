@@ -5,8 +5,7 @@ import { loadSyncSettings, saveSyncSettings, SyncSettings } from '../storage';
 import { testConnection } from '../sync';
 import { performSync, SyncOutcome } from '../backgroundSync';
 import { Plant } from '../types';
-import { Language, useLanguage } from '../i18n';
-import { Select } from './Select';
+import { useLanguage } from '../i18n';
 
 interface Props {
   visible: boolean;
@@ -33,7 +32,7 @@ function formatLastSync(lastSyncAt: number | null, t: (key: string) => string): 
 }
 
 export function SyncSettingsModal({ visible, onClose, onSynced }: Props) {
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useLanguage();
   const [host, setHost] = useState('');
   const [port, setPort] = useState('8787');
   const [lastSyncAt, setLastSyncAt] = useState<number | null>(null);
@@ -93,18 +92,6 @@ export function SyncSettingsModal({ visible, onClose, onSynced }: Props) {
       <View style={styles.overlay}>
         <View style={styles.card}>
           <Text style={styles.title}>{t('sync_title')}</Text>
-
-          <Text style={styles.label}>{t('language_label')}</Text>
-          <View style={styles.selectWrap}>
-            <Select
-              value={language}
-              options={[
-                { label: 'Русский', value: 'ru' },
-                { label: 'English', value: 'en' },
-              ]}
-              onChange={(lang) => setLanguage(lang as Language)}
-            />
-          </View>
 
           <Text style={styles.label}>{t('sync_host_label')}</Text>
           <TextInput
@@ -221,8 +208,5 @@ const styles = StyleSheet.create({
   buttonText: {
     color: theme.textSecondary,
     fontSize: 13,
-  },
-  selectWrap: {
-    marginBottom: 12,
   },
 });
