@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plant Alarm — напоминание о поливе для Windows и Android</title>
+<meta name="description" content="Виджет для Windows и приложение для Android, которые напоминают полить растения — с синхронизацией по локальной сети.">
+<link rel="icon" type="image/png" href="icon.png">
+<style>
+  :root {
+    --bg: #1E2B1C;
+    --panel: #2B3A28;
+    --border: #3A5A3A;
+    --text: #FFFFFF;
+    --text-secondary: #C8D8C8;
+    --text-muted: #8CA08C;
+    --accent: #4CAF50;
+    --water: #5DADE2;
+    --water-dark: #2E86C1;
+    --danger: #E05A47;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+  }
+
+  a { color: var(--water); }
+
+  .wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  header.hero {
+    padding: 96px 0 72px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    width: 96px;
+    height: 96px;
+    margin-bottom: 16px;
+    border-radius: 22px;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0 0 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .tagline {
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+    max-width: 560px;
+    margin: 0 auto 32px;
+  }
+
+  .cta {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 1px solid transparent;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+
+  .btn:hover { transform: translateY(-1px); }
+
+  .btn.primary {
+    background: var(--accent);
+    color: #0e1a0d;
+  }
+
+  .btn.secondary {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text);
+  }
+
+  section {
+    padding: 72px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  section:last-of-type { border-bottom: none; }
+
+  h2 {
+    font-size: 1.8rem;
+    margin: 0 0 36px;
+    text-align: center;
+  }
+
+  .screens {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .screens figure {
+    margin: 0;
+    text-align: center;
+  }
+
+  .screens img {
+    max-width: 100%;
+    height: 420px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  }
+
+  .screens figcaption {
+    margin-top: 14px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 24px;
+  }
+
+  .feature {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+  }
+
+  .feature .icon {
+    font-size: 1.6rem;
+    margin-bottom: 12px;
+  }
+
+  .feature h3 {
+    margin: 0 0 8px;
+    font-size: 1.05rem;
+  }
+
+  .feature p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+  }
+
+  .platforms {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .platform {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+  }
+
+  .platform h3 {
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  footer {
+    padding: 40px 0 60px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  footer a { color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <img class="logo" src="icon.png" alt="Plant Alarm">
+    <h1>Plant Alarm</h1>
+    <p class="tagline">
+      Виджет для Windows и приложение для Android, которые напоминают полить растения —
+      с синхронизацией между телефоном и десктопом по локальной сети, без облака и аккаунтов.
+    </p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/labaks/PlantAlarm/releases">Скачать</a>
+      <a class="btn secondary" href="https://github.com/labaks/PlantAlarm">Исходный код на GitHub</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>Как это выглядит</h2>
+    <div class="screens">
+      <figure>
+        <img src="screenshots/desktop.png" alt="Десктоп-виджет Plant Alarm">
+        <figcaption>Десктоп-виджет (Windows)</figcaption>
+      </figure>
+      <figure>
+        <img src="screenshots/mobile.png" alt="Мобильное приложение Plant Alarm">
+        <figcaption>Мобильное приложение (Android)</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Возможности</h2>
+    <div class="features">
+      <div class="feature">
+        <div class="icon">💧</div>
+        <h3>Капля-индикатор</h3>
+        <p>Показывает, сколько «воды» осталось до следующего полива, и постепенно пустеет к сроку — на глаз видно, кому пора.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">✅</div>
+        <h3>Полить в любой момент</h3>
+        <p>Кнопка «Полить» активна всегда. Если поливаете раньше срока — приложение переспросит, а не заблокирует кнопку.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">📅</div>
+        <h3>Своя дата полива</h3>
+        <p>Дату последнего полива можно указать при добавлении растения и поправить позже в редактировании.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🔔</div>
+        <h3>Push-уведомления</h3>
+        <p>Телефон напомнит, когда придёт время полива, даже если приложение закрыто.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🔄</div>
+        <h3>Синхронизация по Wi-Fi</h3>
+        <p>Телефон и десктоп сверяют списки растений по локальной сети — двустороннее слияние изменений, без облака.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">⏱️</div>
+        <h3>Свой интервал на растение</h3>
+        <p>У каждого растения — собственный график полива в днях, а не общий для всех.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Скачать</h2>
+    <div class="platforms">
+      <div class="platform">
+        <h3>🖥️ Десктоп (Windows)</h3>
+        <p>Готовый <code>.exe</code>, .NET на компьютере не нужен — на странице релизов.</p>
+      </div>
+      <div class="platform">
+        <h3>📱 Мобильное (Android)</h3>
+        <p>Готовый <code>.apk</code> — там же, на странице релизов.</p>
+      </div>
+    </div>
+    <div class="cta" style="margin-top: 32px;">
+      <a class="btn primary" href="https://github.com/labaks/PlantAlarm/releases">Все релизы на GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><a href="https://github.com/labaks/PlantAlarm">github.com/labaks/PlantAlarm</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
