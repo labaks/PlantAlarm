@@ -8,5 +8,6 @@ public class AppSettings
     public double? WindowHeight { get; set; }
     public bool AlwaysOnTop { get; set; } = true;
     public bool AllowResize { get; set; } = false;
+    public bool SoundEnabled { get; set; } = true;
     public string? Language { get; set; }
 }

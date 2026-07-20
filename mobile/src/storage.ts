@@ -5,6 +5,7 @@ import type { Language } from './i18n';
 const KEY = 'plantwidget.plants';
 const SYNC_SETTINGS_KEY = 'plantwidget.syncSettings';
 const LANGUAGE_KEY = 'plantwidget.language';
+const SOUND_ENABLED_KEY = 'plantwidget.soundEnabled';
 
 export async function loadPlants(): Promise<Plant[]> {
   try {
@@ -57,4 +58,17 @@ export async function loadLanguage(): Promise<Language | null> {
 
 export async function saveLanguage(language: Language): Promise<void> {
   await AsyncStorage.setItem(LANGUAGE_KEY, language);
+}
+
+export async function loadSoundEnabled(): Promise<boolean> {
+  try {
+    const raw = await AsyncStorage.getItem(SOUND_ENABLED_KEY);
+    return raw === null ? true : raw === 'true';
+  } catch {
+    return true;
+  }
+}
+
+export async function saveSoundEnabled(enabled: boolean): Promise<void> {
+  await AsyncStorage.setItem(SOUND_ENABLED_KEY, String(enabled));
 }

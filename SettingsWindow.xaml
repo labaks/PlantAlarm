@@ -24,8 +24,11 @@
                 <CheckBox x:Name="AutostartBox" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,14"
                           Checked="AutostartBox_Changed" Unchecked="AutostartBox_Changed"/>
 
-                <CheckBox x:Name="AllowResizeBox" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,18"
+                <CheckBox x:Name="AllowResizeBox" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,14"
                           Checked="AllowResizeBox_Changed" Unchecked="AllowResizeBox_Changed"/>
+
+                <CheckBox x:Name="SoundBox" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,18"
+                          Checked="SoundBox_Changed" Unchecked="SoundBox_Changed"/>
 
                 <TextBlock x:Name="LanguageLabel" Foreground="#C8D8C8" FontSize="12" Margin="0,0,0,4"/>
                 <ComboBox x:Name="LanguageComboBox" Style="{StaticResource DialogComboBoxStyle}" Margin="0,0,0,18"

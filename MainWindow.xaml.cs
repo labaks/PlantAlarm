@@ -28,6 +28,7 @@ public partial class MainWindow : Window
     private readonly DispatcherTimer _refreshTimer;
     private readonly DispatcherTimer _reminderTimer;
     private readonly LocalSyncServer _syncServer;
+    private bool _soundEnabled = true;
 
     public bool AllowClose { get; set; } = false;
 
@@ -53,6 +54,7 @@ public partial class MainWindow : Window
         var initialSettings = _settingsStore.Load();
         Topmost = initialSettings.AlwaysOnTop;
         ApplyResizable(initialSettings.AllowResize);
+        _soundEnabled = initialSettings.SoundEnabled;
         RestorePosition();
 
         // Recheck day-rollover status text periodically.
@@ -121,6 +123,16 @@ public partial class MainWindow : Window
         ApplyResizable(value);
         var settings = _settingsStore.Load();
         settings.AllowResize = value;
+        _settingsStore.Save(settings);
+    }
+
+    public bool SoundEnabled => _soundEnabled;
+
+    public void SetSoundEnabled(bool value)
+    {
+        _soundEnabled = value;
+        var settings = _settingsStore.Load();
+        settings.SoundEnabled = value;
         _settingsStore.Save(settings);
     }
 
@@ -215,7 +227,7 @@ public partial class MainWindow : Window
                 var text = plant.DaysLeft < 0
                     ? Strings.NotifOverdue(plant.Name, -plant.DaysLeft)
                     : Strings.NotifDue(plant.Name);
-                App.ShowNotification(Strings.T("tray_text"), text);
+                App.ShowNotification(Strings.T("tray_text"), text, _soundEnabled);
                 plant.LastNotified = today;
             }
         }

@@ -55,6 +55,7 @@ public static class Strings
         ["opt_always_on_top"] = ("Отображать поверх всех окон", "Always on top"),
         ["opt_autostart"] = ("Запускать при старте Windows", "Start with Windows"),
         ["opt_allow_resize"] = ("Разрешить изменение размера окна", "Allow window resizing"),
+        ["opt_notification_sound"] = ("Звук уведомления", "Notification sound"),
         ["language_label"] = ("Язык", "Language"),
         ["sync_address_label"] = ("Адрес для синхронизации с телефоном", "Address for syncing with your phone"),
         ["sync_address_hint"] = (

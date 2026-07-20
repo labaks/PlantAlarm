@@ -76,9 +76,11 @@ public partial class App : Application
         Shutdown();
     }
 
-    public static void ShowNotification(string title, string text)
+    public static void ShowNotification(string title, string text, bool playSound = true)
     {
         _trayIcon?.ShowBalloonTip(5000, title, text, WF.ToolTipIcon.Info);
+        if (playSound)
+            System.Media.SystemSounds.Asterisk.Play();
     }
 
     protected override void OnExit(ExitEventArgs e)

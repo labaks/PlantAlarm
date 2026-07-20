@@ -4,12 +4,21 @@ import { Plant, nextWaterDate, today } from './types';
 import { Language, translate } from './i18n';
 
 const REMINDER_HOUR = 9;
+const CHANNEL_ID = 'watering';
+const SILENT_CHANNEL_ID = 'watering-silent';
+
+// Read by the foreground notification handler below; kept in sync with the persisted
+// setting by App.tsx so a just-changed toggle applies without needing a reload.
+let soundEnabled = true;
+export function setSoundEnabled(enabled: boolean): void {
+  soundEnabled = enabled;
+}
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowBanner: true,
     shouldShowList: true,
-    shouldPlaySound: true,
+    shouldPlaySound: soundEnabled,
     shouldSetBadge: false,
   }),
 });
@@ -23,18 +32,28 @@ export async function ensureNotificationPermission(): Promise<boolean> {
 
 export async function setupNotificationChannel(language: Language): Promise<void> {
   if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('watering', {
+    // Android ties sound to the channel (fixed once created), not to each notification —
+    // so a silent variant is a separate channel, picked per-schedule based on the setting.
+    await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
       name: translate('notif_channel_name', language),
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#4CAF50',
     });
+    await Notifications.setNotificationChannelAsync(SILENT_CHANNEL_ID, {
+      name: translate('notif_channel_name', language),
+      importance: Notifications.AndroidImportance.HIGH,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#4CAF50',
+      sound: null,
+    });
   }
 }
 
 /** Cancels every scheduled reminder and re-schedules one per plant, based on current data. */
-export async function rescheduleAll(plants: Plant[], language: Language): Promise<void> {
+export async function rescheduleAll(plants: Plant[], language: Language, soundOn: boolean): Promise<void> {
   await Notifications.cancelAllScheduledNotificationsAsync();
+  const channelId = soundOn ? CHANNEL_ID : SILENT_CHANNEL_ID;
 
   for (const plant of plants) {
     const due = nextWaterDate(plant);
@@ -44,13 +63,13 @@ export async function rescheduleAll(plants: Plant[], language: Language): Promis
       trigger = {
         type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
         seconds: 5,
-        channelId: 'watering',
+        channelId,
       };
     } else {
       trigger = {
         type: Notifications.SchedulableTriggerInputTypes.DATE,
         date: new Date(due.getFullYear(), due.getMonth(), due.getDate(), REMINDER_HOUR, 0, 0),
-        channelId: 'watering',
+        channelId,
       };
     }
 

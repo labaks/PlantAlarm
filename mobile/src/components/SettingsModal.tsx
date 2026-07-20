@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 import { theme } from '../theme';
 import { Language, useLanguage } from '../i18n';
 import { Select } from './Select';
@@ -8,9 +8,11 @@ interface Props {
   visible: boolean;
   onClose: () => void;
   onOpenSync: () => void;
+  soundEnabled: boolean;
+  onToggleSound: (enabled: boolean) => void;
 }
 
-export function SettingsModal({ visible, onClose, onOpenSync }: Props) {
+export function SettingsModal({ visible, onClose, onOpenSync, soundEnabled, onToggleSound }: Props) {
   const { language, setLanguage, t } = useLanguage();
 
   return (
@@ -28,6 +30,15 @@ export function SettingsModal({ visible, onClose, onOpenSync }: Props) {
                 { label: 'English', value: 'en' },
               ]}
               onChange={(lang) => setLanguage(lang as Language)}
+            />
+          </View>
+
+          <View style={styles.row}>
+            <Text style={styles.rowText}>{t('opt_notification_sound')}</Text>
+            <Switch
+              value={soundEnabled}
+              onValueChange={onToggleSound}
+              trackColor={{ true: theme.accent }}
             />
           </View>
 

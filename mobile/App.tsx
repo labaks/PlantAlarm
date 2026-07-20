@@ -7,9 +7,9 @@ import { ConfirmModal } from './src/components/ConfirmModal';
 import { SettingsModal } from './src/components/SettingsModal';
 import { SyncSettingsModal } from './src/components/SyncSettingsModal';
 import { theme } from './src/theme';
-import { loadPlants, savePlants } from './src/storage';
+import { loadPlants, loadSoundEnabled, savePlants, saveSoundEnabled } from './src/storage';
 import { registerBackgroundSync } from './src/backgroundSync';
-import { ensureNotificationPermission, rescheduleAll, setupNotificationChannel } from './src/notifications';
+import { ensureNotificationPermission, rescheduleAll, setSoundEnabled, setupNotificationChannel } from './src/notifications';
 import { Plant, daysLeft, formatDate, generatePlantId, isWaterable, nowMs, today } from './src/types';
 import { LanguageProvider, formatDays, useLanguage } from './src/i18n';
 
@@ -31,6 +31,7 @@ function AppContent() {
   const [earlyWaterPlant, setEarlyWaterPlant] = useState<Plant | null>(null);
   const [settingsVisible, setSettingsVisible] = useState(false);
   const [syncSettingsVisible, setSyncSettingsVisible] = useState(false);
+  const [soundEnabled, setSoundEnabledState] = useState(true);
   const [, setTick] = useState(0);
 
   useEffect(() => {
@@ -39,6 +40,9 @@ function AppContent() {
       await ensureNotificationPermission();
       const stored = await loadPlants();
       setPlants(stored);
+      const storedSoundEnabled = await loadSoundEnabled();
+      setSoundEnabledState(storedSoundEnabled);
+      setSoundEnabled(storedSoundEnabled);
       setLoaded(true);
       await registerBackgroundSync();
     })();
@@ -52,8 +56,14 @@ function AppContent() {
   useEffect(() => {
     if (!loaded) return;
     savePlants(plants);
-    rescheduleAll(visiblePlants, language);
-  }, [plants, loaded, language]);
+    rescheduleAll(visiblePlants, language, soundEnabled);
+  }, [plants, loaded, language, soundEnabled]);
+
+  const handleToggleSound = (enabled: boolean) => {
+    setSoundEnabledState(enabled);
+    setSoundEnabled(enabled);
+    saveSoundEnabled(enabled);
+  };
 
   const handleAdd = (name: string, intervalDays: number, daysSinceWatered: number, photoUri: string | undefined) => {
     const lastWatered = new Date(today());
@@ -177,6 +187,8 @@ function AppContent() {
         visible={settingsVisible}
         onClose={() => setSettingsVisible(false)}
         onOpenSync={() => setSyncSettingsVisible(true)}
+        soundEnabled={soundEnabled}
+        onToggleSound={handleToggleSound}
       />
 
       <SyncSettingsModal

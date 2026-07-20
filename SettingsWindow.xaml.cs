@@ -20,6 +20,7 @@ public partial class SettingsWindow : Window
         AlwaysOnTopBox.IsChecked = _mainWindow.AlwaysOnTop;
         AutostartBox.IsChecked = AutostartService.IsEnabled;
         AllowResizeBox.IsChecked = _mainWindow.AllowResize;
+        SoundBox.IsChecked = _mainWindow.SoundEnabled;
 
         var ip = LocalSyncServer.GetLocalIPv4();
         SyncAddressBox.Text = ip == null ? Strings.T("sync_address_unknown") : $"{ip}:{LocalSyncServer.Port}";
@@ -38,6 +39,7 @@ public partial class SettingsWindow : Window
         AlwaysOnTopBox.Content = Strings.T("opt_always_on_top");
         AutostartBox.Content = Strings.T("opt_autostart");
         AllowResizeBox.Content = Strings.T("opt_allow_resize");
+        SoundBox.Content = Strings.T("opt_notification_sound");
         LanguageLabel.Text = Strings.T("language_label");
         SyncAddressLabel.Text = Strings.T("sync_address_label");
         SyncAddressHint.Text = Strings.T("sync_address_hint");
@@ -83,6 +85,12 @@ public partial class SettingsWindow : Window
     {
         if (_initializing) return;
         _mainWindow.SetAllowResize(AllowResizeBox.IsChecked == true);
+    }
+
+    private void SoundBox_Changed(object sender, RoutedEventArgs e)
+    {
+        if (_initializing) return;
+        _mainWindow.SetSoundEnabled(SoundBox.IsChecked == true);
     }
 
     private void Close_Click(object sender, RoutedEventArgs e)

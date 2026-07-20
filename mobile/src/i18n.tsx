@@ -33,6 +33,7 @@ const TABLE: Record<string, [string, string]> = {
   photo_gallery_button: ['Галерея', 'Gallery'],
   photo_remove_button: ['Удалить', 'Remove'],
   photo_permission_denied: ['Нет доступа. Разрешите доступ в настройках телефона.', "No access. Please allow access in your phone's settings."],
+  opt_notification_sound: ['Звук уведомления', 'Notification sound'],
 
   sync_title: ['Синхронизация с десктопом', 'Sync with desktop'],
   sync_host_label: ['IP-адрес десктопа', 'Desktop IP address'],
