@@ -44,9 +44,20 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="White" FontSize="13"/>
-                                        <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusBrush}" FontSize="12"/>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Grid Width="32" Height="32" Margin="0,0,8,0">
+                                            <Ellipse Stroke="#3A5A3A" StrokeThickness="1" Fill="#1FFFFFFF"/>
+                                            <Ellipse Stroke="#3A5A3A" StrokeThickness="1">
+                                                <Ellipse.Fill>
+                                                    <Binding Path="PhotoPath" Converter="{StaticResource PhotoBrushConverter}"/>
+                                                </Ellipse.Fill>
+                                            </Ellipse>
+                                            <TextBlock Text="🌱" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"/>
+                                        </Grid>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="White" FontSize="13"/>
+                                            <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusBrush}" FontSize="12"/>
+                                        </StackPanel>
                                     </StackPanel>
                                     <Button Grid.Column="1" Width="30" Height="30" Margin="4,0"
                                             Style="{StaticResource WaterButtonStyle}"

@@ -20,6 +20,12 @@ export interface Plant {
    * from whichever device hasn't deleted it yet.
    */
   deleted?: boolean;
+  /**
+   * Local file URI for the plant's photo. Device-local only — deliberately not synced (the
+   * desktop's sync response never carries it), since a phone URI is meaningless on the desktop
+   * and vice versa. backgroundSync.ts re-attaches it after every sync round-trip.
+   */
+  photoUri?: string;
 }
 
 export function nowMs(): number {

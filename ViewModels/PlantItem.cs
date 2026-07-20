@@ -31,6 +31,15 @@ public class PlantItem : INotifyPropertyChanged
 
     public DateTime LastWatered => Plant.LastWatered;
 
+    public string? PhotoPath => Plant.PhotoPath;
+
+    public void SetPhotoPath(string? path)
+    {
+        Plant.PhotoPath = path;
+        Plant.UpdatedAt = DateTime.UtcNow;
+        OnPropertyChanged(nameof(PhotoPath));
+    }
+
     public string StatusText
     {
         get

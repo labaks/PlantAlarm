@@ -20,6 +20,13 @@ public class Plant
     /// </summary>
     public bool Deleted { get; set; } = false;
 
+    /// <summary>
+    /// Local file path to a copy of the plant's photo (see Services/PhotoStore.cs). Device-local
+    /// only — deliberately excluded from PlantDto/sync, since a desktop file path is meaningless
+    /// on the phone and vice versa.
+    /// </summary>
+    public string? PhotoPath { get; set; }
+
     public DateTime NextWaterDate => LastWatered.Date.AddDays(IntervalDays);
     public int DaysLeft => (NextWaterDate - DateTime.Today).Days;
 }

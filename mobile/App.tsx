@@ -55,23 +55,23 @@ function AppContent() {
     rescheduleAll(visiblePlants, language);
   }, [plants, loaded, language]);
 
-  const handleAdd = (name: string, intervalDays: number, daysSinceWatered: number) => {
+  const handleAdd = (name: string, intervalDays: number, daysSinceWatered: number, photoUri: string | undefined) => {
     const lastWatered = new Date(today());
     lastWatered.setDate(lastWatered.getDate() - daysSinceWatered);
     setPlants((prev) => [
       ...prev,
-      { id: generatePlantId(), name, intervalDays, lastWatered: formatDate(lastWatered), updatedAt: nowMs() },
+      { id: generatePlantId(), name, intervalDays, lastWatered: formatDate(lastWatered), updatedAt: nowMs(), photoUri },
     ]);
     setFormVisible(false);
   };
 
-  const handleEditSave = (name: string, intervalDays: number, daysSinceWatered: number) => {
+  const handleEditSave = (name: string, intervalDays: number, daysSinceWatered: number, photoUri: string | undefined) => {
     const lastWatered = new Date(today());
     lastWatered.setDate(lastWatered.getDate() - daysSinceWatered);
     setPlants((prev) =>
       prev.map((p) =>
         p.id === editingPlant!.id
-          ? { ...p, name, intervalDays, lastWatered: formatDate(lastWatered), updatedAt: nowMs() }
+          ? { ...p, name, intervalDays, lastWatered: formatDate(lastWatered), updatedAt: nowMs(), photoUri }
           : p,
       ),
     );
@@ -149,6 +149,7 @@ function AppContent() {
         initialName={editingPlant?.name}
         initialInterval={editingPlant?.intervalDays}
         initialLastWatered={editingPlant?.lastWatered}
+        initialPhotoUri={editingPlant?.photoUri}
         onCancel={() => setEditingPlant(null)}
         onSave={handleEditSave}
       />

@@ -18,6 +18,21 @@
             </Grid>
 
             <StackPanel Margin="16,4,16,16">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                    <Grid Width="48" Height="48" Margin="0,0,10,0">
+                        <Ellipse Stroke="#3A5A3A" StrokeThickness="1" Fill="#1FFFFFFF"/>
+                        <Ellipse x:Name="PhotoCircle" Stroke="#3A5A3A" StrokeThickness="1"/>
+                        <TextBlock x:Name="PhotoPlaceholder" Text="🌱" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"/>
+                    </Grid>
+                    <StackPanel VerticalAlignment="Center">
+                        <Button x:Name="ChoosePhotoButton" Style="{StaticResource DialogButtonStyle}"
+                                HorizontalAlignment="Left" Margin="0,0,0,4" Click="ChoosePhoto_Click"/>
+                        <Button x:Name="RemovePhotoButton" Style="{StaticResource PlainIconButtonStyle}"
+                                Foreground="#8FA08F" FontSize="11" HorizontalAlignment="Left" Padding="0"
+                                Visibility="Collapsed" Click="RemovePhoto_Click"/>
+                    </StackPanel>
+                </StackPanel>
+
                 <TextBlock x:Name="NameLabel" Foreground="#C8D8C8" Margin="0,0,0,4"/>
                 <TextBox x:Name="NameBox" Style="{StaticResource DialogTextBoxStyle}" Margin="0,0,0,12"/>
 

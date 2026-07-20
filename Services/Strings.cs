@@ -47,6 +47,9 @@ public static class Strings
         ["err_name_required"] = ("Введите название растения.", "Enter a plant name."),
         ["err_interval_invalid"] = ("Интервал должен быть положительным числом дней.", "Interval must be a positive number of days."),
         ["err_days_ago_invalid"] = ("Дней с последнего полива — число 0 или больше.", "Days since last watered must be 0 or greater."),
+        ["choose_photo_button"] = ("Выбрать фото", "Choose photo"),
+        ["remove_photo_button"] = ("Удалить фото", "Remove photo"),
+        ["photo_filter"] = ("Изображения|*.jpg;*.jpeg;*.png;*.bmp;*.webp|Все файлы|*.*", "Image files|*.jpg;*.jpeg;*.png;*.bmp;*.webp|All files|*.*"),
 
         ["settings_title"] = ("Настройки", "Settings"),
         ["opt_always_on_top"] = ("Отображать поверх всех окон", "Always on top"),

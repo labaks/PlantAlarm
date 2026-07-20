@@ -29,6 +29,10 @@ const TABLE: Record<string, [string, string]> = {
   err_name_required: ['Введите название растения.', 'Enter a plant name.'],
   err_interval_invalid: ['Интервал должен быть положительным числом дней.', 'Interval must be a positive number of days.'],
   err_days_ago_invalid: ['Дней с последнего полива — число 0 или больше.', 'Days since last watered must be 0 or greater.'],
+  photo_camera_button: ['Камера', 'Camera'],
+  photo_gallery_button: ['Галерея', 'Gallery'],
+  photo_remove_button: ['Удалить', 'Remove'],
+  photo_permission_denied: ['Нет доступа. Разрешите доступ в настройках телефона.', "No access. Please allow access in your phone's settings."],
 
   sync_title: ['Синхронизация с десктопом', 'Sync with desktop'],
   sync_host_label: ['IP-адрес десктопа', 'Desktop IP address'],

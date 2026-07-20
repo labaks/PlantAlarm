@@ -33,7 +33,14 @@
         }
       ],
       "expo-background-task",
-      "./plugins/withCleartextTraffic"
+      "./plugins/withCleartextTraffic",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to set a plant picture.",
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to take a plant picture."
+        }
+      ]
     ]
   }
 }

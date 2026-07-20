@@ -3,21 +3,32 @@ import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-nativ
 import { theme } from '../theme';
 import { daysBetween, parseDate, today } from '../types';
 import { useLanguage } from '../i18n';
+import { PhotoPicker } from './PhotoPicker';
 
 interface Props {
   visible: boolean;
   initialName?: string;
   initialInterval?: number;
   initialLastWatered?: string;
+  initialPhotoUri?: string;
   onCancel: () => void;
-  onSave: (name: string, intervalDays: number, daysSinceWatered: number) => void;
+  onSave: (name: string, intervalDays: number, daysSinceWatered: number, photoUri: string | undefined) => void;
 }
 
-export function PlantFormModal({ visible, initialName, initialInterval, initialLastWatered, onCancel, onSave }: Props) {
+export function PlantFormModal({
+  visible,
+  initialName,
+  initialInterval,
+  initialLastWatered,
+  initialPhotoUri,
+  onCancel,
+  onSave,
+}: Props) {
   const { t } = useLanguage();
   const [name, setName] = useState(initialName ?? '');
   const [interval, setInterval] = useState(String(initialInterval ?? 7));
   const [daysAgo, setDaysAgo] = useState('0');
+  const [photoUri, setPhotoUri] = useState<string | undefined>(initialPhotoUri);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -25,9 +36,10 @@ export function PlantFormModal({ visible, initialName, initialInterval, initialL
       setName(initialName ?? '');
       setInterval(String(initialInterval ?? 7));
       setDaysAgo(String(initialLastWatered ? daysBetween(parseDate(initialLastWatered), today()) : 0));
+      setPhotoUri(initialPhotoUri);
       setError('');
     }
-  }, [visible, initialName, initialInterval, initialLastWatered]);
+  }, [visible, initialName, initialInterval, initialLastWatered, initialPhotoUri]);
 
   const handleSave = () => {
     const trimmedName = name.trim();
@@ -45,7 +57,7 @@ export function PlantFormModal({ visible, initialName, initialInterval, initialL
       setError(t('err_days_ago_invalid'));
       return;
     }
-    onSave(trimmedName, days, daysAgoNum);
+    onSave(trimmedName, days, daysAgoNum, photoUri);
   };
 
   return (
@@ -53,6 +65,8 @@ export function PlantFormModal({ visible, initialName, initialInterval, initialL
       <View style={styles.overlay}>
         <View style={styles.card}>
           <Text style={styles.title}>{initialName ? t('edit_title') : t('add_title')}</Text>
+
+          <PhotoPicker photoUri={photoUri} onChange={setPhotoUri} />
 
           <Text style={styles.label}>{t('name_label')}</Text>
           <TextInput

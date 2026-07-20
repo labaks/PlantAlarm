@@ -303,6 +303,7 @@ public partial class MainWindow : Window
                 Name = dialog.PlantName,
                 IntervalDays = dialog.IntervalDays,
                 LastWatered = DateTime.Today.AddDays(-dialog.DaysSinceWatered),
+                PhotoPath = dialog.PhotoPath,
             };
             _plants.Add(new PlantItem(plant));
             Save();
@@ -314,12 +315,13 @@ public partial class MainWindow : Window
         if (((FrameworkElement)sender).DataContext is not PlantItem item) return;
 
         var daysSinceWatered = (DateTime.Today - item.Plant.LastWatered.Date).Days;
-        var dialog = new AddPlantWindow(item.Name, item.IntervalDays, daysSinceWatered) { Owner = this };
+        var dialog = new AddPlantWindow(item.Name, item.IntervalDays, daysSinceWatered, item.PhotoPath) { Owner = this };
         if (dialog.ShowDialog() == true)
         {
             item.Name = dialog.PlantName;
             item.IntervalDays = dialog.IntervalDays;
             item.SetLastWatered(DateTime.Today.AddDays(-dialog.DaysSinceWatered));
+            item.SetPhotoPath(dialog.PhotoPath);
             Save();
         }
     }

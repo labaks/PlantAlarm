@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Plant, fillFraction, statusColor, statusText } from '../types';
 import { theme } from '../theme';
 import { useLanguage } from '../i18n';
@@ -17,6 +17,14 @@ export function PlantRow({ plant, onWater, onEdit, onDelete }: Props) {
 
   return (
     <View style={styles.card}>
+      <View style={styles.photoCircle}>
+        {plant.photoUri ? (
+          <Image source={{ uri: plant.photoUri }} style={styles.photoImage} />
+        ) : (
+          <Text style={styles.photoPlaceholder}>🌱</Text>
+        )}
+      </View>
+
       <View style={styles.info}>
         <Text style={styles.name}>{plant.name}</Text>
         <Text style={[styles.status, { color: statusColor(plant) }]}>{statusText(plant, language)}</Text>
@@ -45,6 +53,25 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 12,
     marginBottom: 8,
+  },
+  photoCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderWidth: 1,
+    borderColor: theme.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    marginRight: 10,
+  },
+  photoImage: {
+    width: '100%',
+    height: '100%',
+  },
+  photoPlaceholder: {
+    fontSize: 14,
   },
   info: {
     flex: 1,
