@@ -57,17 +57,22 @@ public static class PlantMapper
         };
 
         var changedSinceLastSync = lastSyncAt == null || updatedAtMs > lastSyncAt;
-        if (changedSinceLastSync)
+        if (plant.PhotoPath != null && File.Exists(plant.PhotoPath))
         {
-            if (plant.PhotoPath != null && File.Exists(plant.PhotoPath))
+            // A photo we have is safe to (re-)send on the first sync too — worst case the
+            // other side re-saves bytes it already had.
+            if (changedSinceLastSync)
             {
                 dto.Photo = Convert.ToBase64String(File.ReadAllBytes(plant.PhotoPath));
                 dto.PhotoExt = Path.GetExtension(plant.PhotoPath).TrimStart('.');
             }
-            else
-            {
-                dto.PhotoRemoved = true;
-            }
+        }
+        else if (lastSyncAt != null && changedSinceLastSync)
+        {
+            // Only claim "removed" once we've synced before — on a first-ever sync, having no
+            // local photo just means we've never had one to give, not that one was deleted.
+            // Confusing the two here previously wiped out real photos on the other device.
+            dto.PhotoRemoved = true;
         }
 
         return dto;

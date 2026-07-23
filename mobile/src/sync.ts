@@ -37,17 +37,22 @@ async function toWireDto(plant: Plant, lastSyncAt: number | null): Promise<Plant
   };
 
   const changedSinceLastSync = lastSyncAt == null || plant.updatedAt > lastSyncAt;
-  if (changedSinceLastSync) {
-    if (plant.photoUri) {
+  if (plant.photoUri) {
+    // A photo we have is safe to (re-)send on the first sync too — worst case the other
+    // side re-saves bytes it already had.
+    if (changedSinceLastSync) {
       try {
         dto.photo = await readPhotoAsBase64(plant.photoUri);
         dto.photoExt = plant.photoUri.split('.').pop()?.split('?')[0] || 'jpg';
       } catch (err) {
         console.warn('[sync] failed to read local photo, sending without it', err);
       }
-    } else {
-      dto.photoRemoved = true;
     }
+  } else if (lastSyncAt != null && changedSinceLastSync) {
+    // Only claim "removed" once we've synced before — on a first-ever sync, having no local
+    // photo just means we've never had one to give, not that one was deleted. Confusing the
+    // two here previously wiped out real photos on the other device.
+    dto.photoRemoved = true;
   }
 
   return dto;
