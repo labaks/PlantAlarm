@@ -40,6 +40,15 @@ public class PlantItem : INotifyPropertyChanged
         OnPropertyChanged(nameof(PhotoPath));
     }
 
+    public string? Notes => Plant.Notes;
+
+    public void SetNotes(string? notes)
+    {
+        Plant.Notes = notes;
+        Plant.UpdatedAt = DateTime.UtcNow;
+        OnPropertyChanged(nameof(Notes));
+    }
+
     public string StatusText
     {
         get

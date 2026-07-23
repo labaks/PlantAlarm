@@ -44,7 +44,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" ToolTip="{Binding Notes}">
                                         <Grid Width="32" Height="32" Margin="0,0,8,0">
                                             <Ellipse Stroke="#3A5A3A" StrokeThickness="1" Fill="#1FFFFFFF"/>
                                             <Ellipse Stroke="#3A5A3A" StrokeThickness="1">

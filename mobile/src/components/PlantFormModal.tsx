@@ -11,8 +11,15 @@ interface Props {
   initialInterval?: number;
   initialLastWatered?: string;
   initialPhotoUri?: string;
+  initialNotes?: string;
   onCancel: () => void;
-  onSave: (name: string, intervalDays: number, daysSinceWatered: number, photoUri: string | undefined) => void;
+  onSave: (
+    name: string,
+    intervalDays: number,
+    daysSinceWatered: number,
+    photoUri: string | undefined,
+    notes: string | undefined,
+  ) => void;
 }
 
 export function PlantFormModal({
@@ -21,6 +28,7 @@ export function PlantFormModal({
   initialInterval,
   initialLastWatered,
   initialPhotoUri,
+  initialNotes,
   onCancel,
   onSave,
 }: Props) {
@@ -29,6 +37,7 @@ export function PlantFormModal({
   const [interval, setInterval] = useState(String(initialInterval ?? 7));
   const [daysAgo, setDaysAgo] = useState('0');
   const [photoUri, setPhotoUri] = useState<string | undefined>(initialPhotoUri);
+  const [notes, setNotes] = useState(initialNotes ?? '');
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -37,9 +46,10 @@ export function PlantFormModal({
       setInterval(String(initialInterval ?? 7));
       setDaysAgo(String(initialLastWatered ? daysBetween(parseDate(initialLastWatered), today()) : 0));
       setPhotoUri(initialPhotoUri);
+      setNotes(initialNotes ?? '');
       setError('');
     }
-  }, [visible, initialName, initialInterval, initialLastWatered, initialPhotoUri]);
+  }, [visible, initialName, initialInterval, initialLastWatered, initialPhotoUri, initialNotes]);
 
   const handleSave = () => {
     const trimmedName = name.trim();
@@ -57,7 +67,7 @@ export function PlantFormModal({
       setError(t('err_days_ago_invalid'));
       return;
     }
-    onSave(trimmedName, days, daysAgoNum, photoUri);
+    onSave(trimmedName, days, daysAgoNum, photoUri, notes.trim() || undefined);
   };
 
   return (
@@ -91,6 +101,15 @@ export function PlantFormModal({
             value={daysAgo}
             onChangeText={setDaysAgo}
             keyboardType="number-pad"
+          />
+
+          <Text style={styles.label}>{t('notes_label')}</Text>
+          <TextInput
+            style={[styles.input, styles.notesInput]}
+            value={notes}
+            onChangeText={setNotes}
+            multiline
+            textAlignVertical="top"
           />
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -145,6 +164,9 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginBottom: 12,
     fontSize: 15,
+  },
+  notesInput: {
+    height: 60,
   },
   error: {
     color: theme.danger,

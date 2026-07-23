@@ -43,6 +43,7 @@ public static class Strings
         ["name_label"] = ("Название", "Name"),
         ["interval_label"] = ("Поливать раз в (дней)", "Water every (days)"),
         ["days_ago_label"] = ("Дней с последнего полива", "Days since last watered"),
+        ["notes_label"] = ("Заметки (необязательно)", "Notes (optional)"),
         ["save_button"] = ("Сохранить", "Save"),
         ["err_name_required"] = ("Введите название растения.", "Enter a plant name."),
         ["err_interval_invalid"] = ("Интервал должен быть положительным числом дней.", "Interval must be a positive number of days."),

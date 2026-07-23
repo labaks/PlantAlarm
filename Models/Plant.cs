@@ -27,6 +27,9 @@ public class Plant
     /// </summary>
     public string? PhotoPath { get; set; }
 
+    /// <summary>Free-form care notes ("by the window", "doesn't like overwatering", fertilizer type, etc.).</summary>
+    public string? Notes { get; set; }
+
     public DateTime NextWaterDate => LastWatered.Date.AddDays(IntervalDays);
     public int DaysLeft => (NextWaterDate - DateTime.Today).Days;
 }

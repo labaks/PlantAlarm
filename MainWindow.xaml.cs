@@ -340,6 +340,7 @@ public partial class MainWindow : Window
                 IntervalDays = dialog.IntervalDays,
                 LastWatered = DateTime.Today.AddDays(-dialog.DaysSinceWatered),
                 PhotoPath = dialog.PhotoPath,
+                Notes = dialog.Notes,
             };
             _plants.Add(new PlantItem(plant));
             Save();
@@ -352,13 +353,14 @@ public partial class MainWindow : Window
 
         var daysSinceWatered = (DateTime.Today - item.Plant.LastWatered.Date).Days;
         var oldPhotoPath = item.PhotoPath;
-        var dialog = new AddPlantWindow(item.Name, item.IntervalDays, daysSinceWatered, item.PhotoPath) { Owner = this };
+        var dialog = new AddPlantWindow(item.Name, item.IntervalDays, daysSinceWatered, item.PhotoPath, item.Notes) { Owner = this };
         if (dialog.ShowDialog() == true)
         {
             item.Name = dialog.PlantName;
             item.IntervalDays = dialog.IntervalDays;
             item.SetLastWatered(DateTime.Today.AddDays(-dialog.DaysSinceWatered));
             item.SetPhotoPath(dialog.PhotoPath);
+            item.SetNotes(dialog.Notes);
             if (oldPhotoPath != null && oldPhotoPath != dialog.PhotoPath)
                 PhotoStore.Delete(oldPhotoPath);
             Save();

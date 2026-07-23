@@ -39,10 +39,14 @@
                 <TextBlock x:Name="IntervalLabel" Foreground="#C8D8C8" Margin="0,0,0,4"/>
                 <TextBox x:Name="IntervalBox" Style="{StaticResource DialogTextBoxStyle}" Margin="0,0,0,12"/>
 
-                <StackPanel x:Name="DaysAgoPanel" Margin="0,0,0,8">
+                <StackPanel x:Name="DaysAgoPanel" Margin="0,0,0,12">
                     <TextBlock x:Name="DaysAgoLabel" Foreground="#C8D8C8" Margin="0,0,0,4"/>
                     <TextBox x:Name="DaysAgoBox" Style="{StaticResource DialogTextBoxStyle}"/>
                 </StackPanel>
+
+                <TextBlock x:Name="NotesLabel" Foreground="#C8D8C8" Margin="0,0,0,4"/>
+                <TextBox x:Name="NotesBox" Style="{StaticResource DialogTextBoxStyle}" Margin="0,0,0,8"
+                         AcceptsReturn="True" TextWrapping="Wrap" Height="60" VerticalScrollBarVisibility="Auto"/>
 
                 <TextBlock x:Name="ErrorText" Foreground="#E0917B" FontSize="12" TextWrapping="Wrap"
                            Margin="0,0,0,8" Visibility="Collapsed"/>

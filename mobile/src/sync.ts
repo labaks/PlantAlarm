@@ -13,6 +13,7 @@ export interface PlantWireDto {
   lastNotifiedDate?: string;
   updatedAt: number;
   deleted: boolean;
+  notes?: string;
   /** Base64 photo bytes — present only if the photo may have changed since lastSyncAt. */
   photo?: string;
   photoExt?: string;
@@ -34,6 +35,7 @@ export async function toWireDto(plant: Plant, lastSyncAt: number | null): Promis
     lastNotifiedDate: plant.lastNotifiedDate,
     updatedAt: plant.updatedAt,
     deleted: !!plant.deleted,
+    notes: plant.notes,
   };
 
   const changedSinceLastSync = lastSyncAt == null || plant.updatedAt > lastSyncAt;
@@ -71,6 +73,7 @@ export async function fromWireDto(dto: PlantWireDto, existing: Plant | undefined
     lastNotifiedDate: dto.lastNotifiedDate,
     updatedAt: dto.updatedAt,
     deleted: dto.deleted,
+    notes: dto.notes,
     photoUri: existing?.photoUri,
   };
 

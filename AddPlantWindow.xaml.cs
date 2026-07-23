@@ -15,8 +15,9 @@ public partial class AddPlantWindow : Window
     public int IntervalDays { get; private set; } = 7;
     public int DaysSinceWatered { get; private set; } = 0;
     public string? PhotoPath { get; private set; }
+    public string? Notes { get; private set; }
 
-    public AddPlantWindow(string? name = null, int? intervalDays = null, int? daysSinceWatered = null, string? photoPath = null)
+    public AddPlantWindow(string? name = null, int? intervalDays = null, int? daysSinceWatered = null, string? photoPath = null, string? notes = null)
     {
         InitializeComponent();
         _isNewPlant = name == null;
@@ -24,6 +25,7 @@ public partial class AddPlantWindow : Window
         NameLabel.Text = Strings.T("name_label");
         IntervalLabel.Text = Strings.T("interval_label");
         DaysAgoLabel.Text = Strings.T("days_ago_label");
+        NotesLabel.Text = Strings.T("notes_label");
         ChoosePhotoButton.Content = Strings.T("choose_photo_button");
         RemovePhotoButton.Content = Strings.T("remove_photo_button");
         CancelButtonElement.Content = Strings.T("cancel_button");
@@ -31,6 +33,7 @@ public partial class AddPlantWindow : Window
         NameBox.Text = name ?? "";
         IntervalBox.Text = (intervalDays ?? 7).ToString();
         DaysAgoBox.Text = (daysSinceWatered ?? 0).ToString();
+        NotesBox.Text = notes ?? "";
         _photoPath = photoPath;
         ApplyPhotoPreview();
         NameBox.Focus();
@@ -67,6 +70,7 @@ public partial class AddPlantWindow : Window
         IntervalDays = interval;
         DaysSinceWatered = daysAgo;
         PhotoPath = _photoPath;
+        Notes = string.IsNullOrWhiteSpace(NotesBox.Text) ? null : NotesBox.Text.Trim();
         DialogResult = true;
     }
 

@@ -75,17 +75,29 @@ function AppContent() {
     saveSoundEnabled(enabled);
   };
 
-  const handleAdd = (name: string, intervalDays: number, daysSinceWatered: number, photoUri: string | undefined) => {
+  const handleAdd = (
+    name: string,
+    intervalDays: number,
+    daysSinceWatered: number,
+    photoUri: string | undefined,
+    notes: string | undefined,
+  ) => {
     const lastWatered = new Date(today());
     lastWatered.setDate(lastWatered.getDate() - daysSinceWatered);
     setPlants((prev) => [
       ...prev,
-      { id: generatePlantId(), name, intervalDays, lastWatered: formatDate(lastWatered), updatedAt: nowMs(), photoUri },
+      { id: generatePlantId(), name, intervalDays, lastWatered: formatDate(lastWatered), updatedAt: nowMs(), photoUri, notes },
     ]);
     setFormVisible(false);
   };
 
-  const handleEditSave = (name: string, intervalDays: number, daysSinceWatered: number, photoUri: string | undefined) => {
+  const handleEditSave = (
+    name: string,
+    intervalDays: number,
+    daysSinceWatered: number,
+    photoUri: string | undefined,
+    notes: string | undefined,
+  ) => {
     const oldPhotoUri = editingPlant!.photoUri;
     if (oldPhotoUri && oldPhotoUri !== photoUri) {
       deletePhotoFile(oldPhotoUri);
@@ -95,7 +107,7 @@ function AppContent() {
     setPlants((prev) =>
       prev.map((p) =>
         p.id === editingPlant!.id
-          ? { ...p, name, intervalDays, lastWatered: formatDate(lastWatered), updatedAt: nowMs(), photoUri }
+          ? { ...p, name, intervalDays, lastWatered: formatDate(lastWatered), updatedAt: nowMs(), photoUri, notes }
           : p,
       ),
     );
@@ -174,6 +186,7 @@ function AppContent() {
         initialInterval={editingPlant?.intervalDays}
         initialLastWatered={editingPlant?.lastWatered}
         initialPhotoUri={editingPlant?.photoUri}
+        initialNotes={editingPlant?.notes}
         onCancel={() => setEditingPlant(null)}
         onSave={handleEditSave}
       />

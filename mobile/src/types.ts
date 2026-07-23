@@ -26,6 +26,8 @@ export interface Plant {
    * rewrites this to wherever they end up saved locally on each device.
    */
   photoUri?: string;
+  /** Free-form care notes ("by the window", "doesn't like overwatering", fertilizer type, etc.). */
+  notes?: string;
 }
 
 export function nowMs(): number {
