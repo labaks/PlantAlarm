@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text.Json;
 using PlantWidget.Models;
 
 namespace PlantWidget.Services;
@@ -33,9 +35,22 @@ public class PlantDto
     public bool PhotoRemoved { get; set; }
 }
 
+/// <summary>Root shape of a backup file — same as the /sync wire payload, so a backup is also importable on the other platform.</summary>
+public class PlantBackup
+{
+    public List<PlantDto> Plants { get; set; } = new();
+}
+
 public static class PlantMapper
 {
     private const string DateFormat = "yyyy-MM-dd";
+
+    /// <summary>Options for serializing/deserializing a <see cref="PlantBackup"/> file.</summary>
+    public static readonly JsonSerializerOptions BackupJsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = true,
+    };
 
     /// <param name="lastSyncAt">
     /// Epoch ms of our last successful sync with the other device, or null if we've never

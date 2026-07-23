@@ -6,6 +6,7 @@ import { PlantFormModal } from './src/components/PlantFormModal';
 import { ConfirmModal } from './src/components/ConfirmModal';
 import { SettingsModal } from './src/components/SettingsModal';
 import { SyncSettingsModal } from './src/components/SyncSettingsModal';
+import { BackupModal } from './src/components/BackupModal';
 import { theme } from './src/theme';
 import { loadPlants, loadSoundEnabled, savePlants, saveSoundEnabled } from './src/storage';
 import { performSync, registerBackgroundSync } from './src/backgroundSync';
@@ -32,6 +33,7 @@ function AppContent() {
   const [earlyWaterPlant, setEarlyWaterPlant] = useState<Plant | null>(null);
   const [settingsVisible, setSettingsVisible] = useState(false);
   const [syncSettingsVisible, setSyncSettingsVisible] = useState(false);
+  const [backupVisible, setBackupVisible] = useState(false);
   const [soundEnabled, setSoundEnabledState] = useState(true);
   const [, setTick] = useState(0);
 
@@ -199,6 +201,7 @@ function AppContent() {
         visible={settingsVisible}
         onClose={() => setSettingsVisible(false)}
         onOpenSync={() => setSyncSettingsVisible(true)}
+        onOpenBackup={() => setBackupVisible(true)}
         soundEnabled={soundEnabled}
         onToggleSound={handleToggleSound}
       />
@@ -207,6 +210,13 @@ function AppContent() {
         visible={syncSettingsVisible}
         onClose={() => setSyncSettingsVisible(false)}
         onSynced={(synced) => setPlants(synced)}
+      />
+
+      <BackupModal
+        visible={backupVisible}
+        plants={plants}
+        onClose={() => setBackupVisible(false)}
+        onImported={(imported) => setPlants(imported)}
       />
     </View>
   );

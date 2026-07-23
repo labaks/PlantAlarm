@@ -42,6 +42,13 @@
                 <TextBlock x:Name="SyncAddressHint"
                            Foreground="#6E7D6E" FontSize="10" TextWrapping="Wrap" Margin="0,0,0,18"/>
 
+                <TextBlock x:Name="BackupLabel" Foreground="#C8D8C8" FontSize="12" Margin="0,0,0,4"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <Button x:Name="ExportButtonElement" Style="{StaticResource DialogButtonStyle}" Margin="0,0,8,0" Click="ExportButton_Click"/>
+                    <Button x:Name="ImportButtonElement" Style="{StaticResource DialogButtonStyle}" Click="ImportButton_Click"/>
+                </StackPanel>
+                <TextBlock x:Name="BackupStatusText" Foreground="#7CB97C" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,18" Visibility="Collapsed"/>
+
                 <Button x:Name="CloseButtonElement" Style="{StaticResource DialogButtonStyle}" HorizontalAlignment="Right" Click="Close_Click"/>
 
                 <TextBlock x:Name="VersionText" Foreground="#6E7D6E" FontSize="11"

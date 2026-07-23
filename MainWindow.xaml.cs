@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
@@ -134,6 +136,28 @@ public partial class MainWindow : Window
         var settings = _settingsStore.Load();
         settings.SoundEnabled = value;
         _settingsStore.Save(settings);
+    }
+
+    /// <summary>
+    /// Writes every plant (including tombstones) to a JSON backup file, photos embedded as
+    /// base64 so the file is a complete, self-contained snapshot — same wire shape as /sync,
+    /// so a backup is also importable on the other platform.
+    /// </summary>
+    public void ExportBackup(string filePath)
+    {
+        var dtos = _store.Load().Select(p => PlantMapper.ToDto(p, null)).ToList();
+        var json = JsonSerializer.Serialize(new PlantBackup { Plants = dtos }, PlantMapper.BackupJsonOptions);
+        File.WriteAllText(filePath, json);
+    }
+
+    /// <summary>Replaces the entire current plant list with the contents of a backup file.</summary>
+    public void ImportBackup(string filePath)
+    {
+        var json = File.ReadAllText(filePath);
+        var backup = JsonSerializer.Deserialize<PlantBackup>(json, PlantMapper.BackupJsonOptions) ?? new PlantBackup();
+        var imported = backup.Plants.Select(PlantMapper.FromDto).ToList();
+        _store.Save(imported);
+        ReloadPlantsFromStore();
     }
 
     private void ApplyResizable(bool enabled)

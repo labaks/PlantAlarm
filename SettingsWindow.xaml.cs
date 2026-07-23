@@ -1,7 +1,9 @@
+using System;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.Win32;
 using PlantWidget.Services;
 
 namespace PlantWidget;
@@ -43,6 +45,9 @@ public partial class SettingsWindow : Window
         LanguageLabel.Text = Strings.T("language_label");
         SyncAddressLabel.Text = Strings.T("sync_address_label");
         SyncAddressHint.Text = Strings.T("sync_address_hint");
+        BackupLabel.Text = Strings.T("backup_label");
+        ExportButtonElement.Content = Strings.T("export_button");
+        ImportButtonElement.Content = Strings.T("import_button");
         CloseButtonElement.Content = Strings.T("close_button");
 
         var version = Assembly.GetExecutingAssembly().GetName().Version;
@@ -91,6 +96,51 @@ public partial class SettingsWindow : Window
     {
         if (_initializing) return;
         _mainWindow.SetSoundEnabled(SoundBox.IsChecked == true);
+    }
+
+    private void ExportButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new SaveFileDialog
+        {
+            Filter = Strings.T("backup_filter"),
+            FileName = $"plantwidget-backup-{DateTime.Now:yyyy-MM-dd}.json",
+        };
+        if (dialog.ShowDialog(this) != true) return;
+
+        try
+        {
+            _mainWindow.ExportBackup(dialog.FileName);
+            ShowBackupStatus(Strings.T("export_success"));
+        }
+        catch
+        {
+            ShowBackupStatus(Strings.T("export_error"));
+        }
+    }
+
+    private void ImportButton_Click(object sender, RoutedEventArgs e)
+    {
+        var openDialog = new OpenFileDialog { Filter = Strings.T("backup_filter") };
+        if (openDialog.ShowDialog(this) != true) return;
+
+        var confirm = new ConfirmWindow(Strings.T("import_confirm_message"), confirmText: Strings.T("import_confirm_button")) { Owner = this };
+        if (confirm.ShowDialog() != true) return;
+
+        try
+        {
+            _mainWindow.ImportBackup(openDialog.FileName);
+            ShowBackupStatus(Strings.T("import_success"));
+        }
+        catch
+        {
+            ShowBackupStatus(Strings.T("import_error"));
+        }
+    }
+
+    private void ShowBackupStatus(string message)
+    {
+        BackupStatusText.Text = message;
+        BackupStatusText.Visibility = Visibility.Visible;
     }
 
     private void Close_Click(object sender, RoutedEventArgs e)

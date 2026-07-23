@@ -5,7 +5,7 @@ import { deletePhotoFile, readPhotoAsBase64, savePhotoFromBase64 } from './photo
 const REQUEST_TIMEOUT_MS = 30000;
 
 /** Wire format matching the desktop's PlantDto exactly (see Services/PlantDto.cs). */
-interface PlantWireDto {
+export interface PlantWireDto {
   id: string;
   name: string;
   intervalDays: number;
@@ -25,7 +25,7 @@ interface PlantWireDto {
  * changed since our last successful sync (or we've never synced before), so routine syncs
  * don't re-upload unchanged photos every time.
  */
-async function toWireDto(plant: Plant, lastSyncAt: number | null): Promise<PlantWireDto> {
+export async function toWireDto(plant: Plant, lastSyncAt: number | null): Promise<PlantWireDto> {
   const dto: PlantWireDto = {
     id: plant.id,
     name: plant.name,
@@ -62,7 +62,7 @@ async function toWireDto(plant: Plant, lastSyncAt: number | null): Promise<Plant
  * Converts a merged DTO from the desktop's response into a local Plant. Absent photo/photoRemoved
  * means "unchanged since our last sync" — keep whatever photoUri this plant already has locally.
  */
-async function fromWireDto(dto: PlantWireDto, existing: Plant | undefined): Promise<Plant> {
+export async function fromWireDto(dto: PlantWireDto, existing: Plant | undefined): Promise<Plant> {
   const plant: Plant = {
     id: dto.id,
     name: dto.name,

@@ -64,6 +64,19 @@ public static class Strings
         ["sync_address_unknown"] = ("не удалось определить IP", "couldn't detect IP"),
         ["close_button"] = ("Закрыть", "Close"),
         ["version_label"] = ("Версия {0}", "Version {0}"),
+
+        ["backup_label"] = ("Резервная копия", "Backup"),
+        ["export_button"] = ("Экспорт", "Export"),
+        ["import_button"] = ("Импорт", "Import"),
+        ["backup_filter"] = ("JSON|*.json", "JSON|*.json"),
+        ["import_confirm_message"] = (
+            "Импорт заменит текущий список растений данными из файла. Продолжить?",
+            "Importing will replace your current plant list with the file's contents. Continue?"),
+        ["import_confirm_button"] = ("Импортировать", "Import"),
+        ["export_success"] = ("Резервная копия сохранена.", "Backup saved."),
+        ["export_error"] = ("Не удалось сохранить резервную копию.", "Couldn't save the backup."),
+        ["import_success"] = ("Список растений импортирован.", "Plant list imported."),
+        ["import_error"] = ("Не удалось прочитать файл резервной копии.", "Couldn't read the backup file."),
     };
 
     public static void Init(string? savedLanguage)

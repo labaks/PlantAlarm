@@ -8,11 +8,12 @@ interface Props {
   visible: boolean;
   onClose: () => void;
   onOpenSync: () => void;
+  onOpenBackup: () => void;
   soundEnabled: boolean;
   onToggleSound: (enabled: boolean) => void;
 }
 
-export function SettingsModal({ visible, onClose, onOpenSync, soundEnabled, onToggleSound }: Props) {
+export function SettingsModal({ visible, onClose, onOpenSync, onOpenBackup, soundEnabled, onToggleSound }: Props) {
   const { language, setLanguage, t } = useLanguage();
 
   return (
@@ -44,6 +45,11 @@ export function SettingsModal({ visible, onClose, onOpenSync, soundEnabled, onTo
 
           <Pressable style={styles.row} onPress={onOpenSync}>
             <Text style={styles.rowText}>{t('sync_title')}</Text>
+            <Text style={styles.rowChevron}>›</Text>
+          </Pressable>
+
+          <Pressable style={styles.row} onPress={onOpenBackup}>
+            <Text style={styles.rowText}>{t('backup_title')}</Text>
             <Text style={styles.rowChevron}>›</Text>
           </Pressable>
 
