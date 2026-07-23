@@ -8,7 +8,7 @@ import { SettingsModal } from './src/components/SettingsModal';
 import { SyncSettingsModal } from './src/components/SyncSettingsModal';
 import { theme } from './src/theme';
 import { loadPlants, loadSoundEnabled, savePlants, saveSoundEnabled } from './src/storage';
-import { registerBackgroundSync } from './src/backgroundSync';
+import { performSync, registerBackgroundSync } from './src/backgroundSync';
 import { ensureNotificationPermission, rescheduleAll, setSoundEnabled, setupNotificationChannel } from './src/notifications';
 import { Plant, daysLeft, formatDate, generatePlantId, isWaterable, nowMs, today } from './src/types';
 import { LanguageProvider, formatDays, useLanguage } from './src/i18n';
@@ -45,6 +45,13 @@ function AppContent() {
       setSoundEnabled(storedSoundEnabled);
       setLoaded(true);
       await registerBackgroundSync();
+
+      // Background task cadence is opportunistic (OS-decided, often overnight), so also try
+      // right on launch — same once-a-day throttle, just not stuck waiting on the OS scheduler.
+      const outcome = await performSync(false);
+      if (outcome.status === 'synced' && outcome.plants) {
+        setPlants(outcome.plants);
+      }
     })();
 
     const interval = setInterval(() => setTick((tick) => tick + 1), 5 * 60 * 1000);
