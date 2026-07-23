@@ -23,7 +23,19 @@ public class PlantStore
         try
         {
             var json = File.ReadAllText(DataFile);
-            return JsonSerializer.Deserialize<List<Plant>>(json, JsonOptions) ?? new List<Plant>();
+            var plants = JsonSerializer.Deserialize<List<Plant>>(json, JsonOptions) ?? new List<Plant>();
+
+            // One-time migration for data saved before manual sorting existed: assign SortOrder
+            // from each plant's current position, so the list doesn't visually reshuffle on
+            // first load after upgrading.
+            if (plants.Exists(p => p.SortOrder == null))
+            {
+                for (var i = 0; i < plants.Count; i++)
+                    plants[i].SortOrder ??= i * 1000.0;
+                Save(plants);
+            }
+
+            return plants;
         }
         catch
         {

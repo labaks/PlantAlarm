@@ -49,6 +49,15 @@ public class PlantItem : INotifyPropertyChanged
         OnPropertyChanged(nameof(Notes));
     }
 
+    public void SetSortOrder(double value)
+    {
+        Plant.SortOrder = value;
+        Plant.UpdatedAt = DateTime.UtcNow;
+        OnPropertyChanged(nameof(SortOrder));
+    }
+
+    public double? SortOrder => Plant.SortOrder;
+
     public string StatusText
     {
         get

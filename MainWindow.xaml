@@ -36,7 +36,13 @@
                 <ItemsControl x:Name="PlantsList">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Background="#22FFFFFF" CornerRadius="6" Margin="4" Padding="8">
+                            <Border Background="#22FFFFFF" CornerRadius="6" Margin="4" Padding="8"
+                                    AllowDrop="True"
+                                    PreviewMouseLeftButtonDown="Row_PreviewMouseLeftButtonDown"
+                                    PreviewMouseMove="Row_PreviewMouseMove"
+                                    DragEnter="Row_DragEnter"
+                                    DragLeave="Row_DragLeave"
+                                    Drop="Row_Drop">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>

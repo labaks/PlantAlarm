@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
@@ -46,7 +47,7 @@ public partial class MainWindow : Window
         };
 
         var loaded = _store.Load();
-        foreach (var plant in loaded.Where(p => !p.Deleted))
+        foreach (var plant in loaded.Where(p => !p.Deleted).OrderBy(p => p.SortOrder ?? 0))
             _plants.Add(new PlantItem(plant));
         _tombstones = loaded.Where(p => p.Deleted).ToList();
 
@@ -265,7 +266,7 @@ public partial class MainWindow : Window
     {
         var loaded = _store.Load();
         _plants.Clear();
-        foreach (var plant in loaded.Where(p => !p.Deleted))
+        foreach (var plant in loaded.Where(p => !p.Deleted).OrderBy(p => p.SortOrder ?? 0))
             _plants.Add(new PlantItem(plant));
         _tombstones = loaded.Where(p => p.Deleted).ToList();
         RefreshStatuses();
@@ -341,6 +342,7 @@ public partial class MainWindow : Window
                 LastWatered = DateTime.Today.AddDays(-dialog.DaysSinceWatered),
                 PhotoPath = dialog.PhotoPath,
                 Notes = dialog.Notes,
+                SortOrder = (_plants.Count > 0 ? _plants.Max(p => p.Plant.SortOrder ?? 0) : 0) + 1000,
             };
             _plants.Add(new PlantItem(plant));
             Save();
@@ -394,6 +396,72 @@ public partial class MainWindow : Window
         }
 
         item.MarkWatered();
+        Save();
+    }
+
+    private Point _dragStartPoint;
+
+    private void Row_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        _dragStartPoint = e.GetPosition(null);
+    }
+
+    private void Row_PreviewMouseMove(object sender, MouseEventArgs e)
+    {
+        if (e.LeftButton != MouseButtonState.Pressed) return;
+
+        var current = e.GetPosition(null);
+        if (Math.Abs(current.X - _dragStartPoint.X) < SystemParameters.MinimumHorizontalDragDistance &&
+            Math.Abs(current.Y - _dragStartPoint.Y) < SystemParameters.MinimumVerticalDragDistance)
+            return;
+
+        if (((FrameworkElement)sender).DataContext is not PlantItem item) return;
+        DragDrop.DoDragDrop((DependencyObject)sender, item, DragDropEffects.Move);
+    }
+
+    private void Row_DragEnter(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetDataPresent(typeof(PlantItem)))
+            ((Border)sender).Background = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromArgb(0x55, 0x4C, 0xAF, 0x50));
+    }
+
+    private void Row_DragLeave(object sender, DragEventArgs e)
+    {
+        ((Border)sender).ClearValue(BackgroundProperty);
+    }
+
+    /// <summary>
+    /// Drag-and-drop reordering. Only the dropped-on plant's SortOrder (and UpdatedAt) changes —
+    /// its new value is the midpoint of its new neighbors' SortOrder, so this syncs like any
+    /// other single-field edit instead of needing to renumber the whole list.
+    /// </summary>
+    private void Row_Drop(object sender, DragEventArgs e)
+    {
+        ((Border)sender).ClearValue(BackgroundProperty);
+        if (e.Data.GetData(typeof(PlantItem)) is not PlantItem dragged) return;
+        if (((FrameworkElement)sender).DataContext is not PlantItem target) return;
+        if (ReferenceEquals(dragged, target)) return;
+
+        var oldIndex = _plants.IndexOf(dragged);
+        var targetIndex = _plants.IndexOf(target);
+        if (oldIndex < 0 || targetIndex < 0) return;
+
+        _plants.Move(oldIndex, targetIndex);
+
+        var newIndex = _plants.IndexOf(dragged);
+        double? prevOrder = newIndex > 0 ? _plants[newIndex - 1].Plant.SortOrder ?? 0 : null;
+        double? nextOrder = newIndex < _plants.Count - 1 ? _plants[newIndex + 1].Plant.SortOrder ?? 0 : null;
+
+        var newSortOrder = (prevOrder, nextOrder) switch
+        {
+            (null, null) => 0,
+            (null, double next) => next - 1000,
+            (double prev, null) => prev + 1000,
+            (double prev, double next) => (prev + next) / 2,
+        };
+
+        dragged.SetSortOrder(newSortOrder);
         Save();
     }
 }

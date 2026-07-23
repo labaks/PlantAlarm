@@ -30,6 +30,14 @@ public class Plant
     /// <summary>Free-form care notes ("by the window", "doesn't like overwatering", fertilizer type, etc.).</summary>
     public string? Notes { get; set; }
 
+    /// <summary>
+    /// Manual sort position (ascending). Nullable so PlantStore.Load can tell legacy rows apart
+    /// and migrate them once; a real value is always assigned before the plant reaches the UI.
+    /// Uses gaps (multiples of 1000) so dragging one plant between two others only needs to
+    /// touch that one plant's value, not renumber the whole list.
+    /// </summary>
+    public double? SortOrder { get; set; }
+
     public DateTime NextWaterDate => LastWatered.Date.AddDays(IntervalDays);
     public int DaysLeft => (NextWaterDate - DateTime.Today).Days;
 }

@@ -28,6 +28,12 @@ export interface Plant {
   photoUri?: string;
   /** Free-form care notes ("by the window", "doesn't like overwatering", fertilizer type, etc.). */
   notes?: string;
+  /**
+   * Manual sort position (ascending). Undefined for legacy rows, migrated once in storage.ts.
+   * Uses gaps (multiples of 1000) so dragging one plant between two others only needs to touch
+   * that one plant's value, not renumber the whole list.
+   */
+  sortOrder?: number;
 }
 
 export function nowMs(): number {

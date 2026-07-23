@@ -14,7 +14,15 @@ export async function loadPlants(): Promise<Plant[]> {
     const parsed = JSON.parse(raw) as Plant[];
     // Plants saved before the updatedAt field existed: treat them as "just seen now"
     // rather than leaving updatedAt undefined, so sync conflict resolution stays sane.
-    return parsed.map((p) => (p.updatedAt ? p : { ...p, updatedAt: Date.now() }));
+    const withUpdatedAt = parsed.map((p) => (p.updatedAt ? p : { ...p, updatedAt: Date.now() }));
+    // Plants saved before manual sort order existed: assign gap-spaced values from their
+    // current array position, once, so drag-to-reorder has something to work from.
+    if (withUpdatedAt.some((p) => p.sortOrder === undefined)) {
+      const migrated = withUpdatedAt.map((p, i) => (p.sortOrder === undefined ? { ...p, sortOrder: i * 1000 } : p));
+      await savePlants(migrated);
+      return migrated;
+    }
+    return withUpdatedAt;
   } catch {
     return [];
   }

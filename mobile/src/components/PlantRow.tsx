@@ -1,5 +1,5 @@
-import React from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useRef } from 'react';
+import { Image, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Plant, fillFraction, statusColor, statusText } from '../types';
 import { theme } from '../theme';
 import { useLanguage } from '../i18n';
@@ -10,13 +10,55 @@ interface Props {
   onWater: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  /** Long-press-and-drag reordering, via the "⠿" handle. All three fire only when the handle is used. */
+  onDragStart?: () => void;
+  onDragMove?: (dy: number) => void;
+  onDragEnd?: () => void;
+  isDragging?: boolean;
+  /** Sub-slot offset (px) to keep the row tracking under the finger between index swaps. */
+  dragOffsetY?: number;
+  onRowHeight?: (height: number) => void;
 }
 
-export function PlantRow({ plant, onWater, onEdit, onDelete }: Props) {
+export function PlantRow({
+  plant,
+  onWater,
+  onEdit,
+  onDelete,
+  onDragStart,
+  onDragMove,
+  onDragEnd,
+  isDragging,
+  dragOffsetY,
+  onRowHeight,
+}: Props) {
   const { language } = useLanguage();
 
+  // PanResponder.create is only called once (via useRef below), so its callbacks must read
+  // props through a ref that's kept current every render — otherwise they close over whatever
+  // onDragStart/onDragMove/onDragEnd were on the row's first render and never see updates again.
+  const dragCallbacks = useRef({ onDragStart, onDragMove, onDragEnd });
+  dragCallbacks.current = { onDragStart, onDragMove, onDragEnd };
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => dragCallbacks.current.onDragStart?.(),
+      onPanResponderMove: (_evt, gestureState) => dragCallbacks.current.onDragMove?.(gestureState.dy),
+      onPanResponderRelease: () => dragCallbacks.current.onDragEnd?.(),
+      onPanResponderTerminate: () => dragCallbacks.current.onDragEnd?.(),
+    }),
+  ).current;
+
   return (
-    <View style={styles.card}>
+    <View
+      onLayout={(e) => onRowHeight?.(e.nativeEvent.layout.height)}
+      style={[
+        styles.card,
+        isDragging && styles.cardDragging,
+        isDragging && { transform: [{ translateY: dragOffsetY ?? 0 }], zIndex: 10, elevation: 6 },
+      ]}
+    >
       <View style={styles.photoCircle}>
         {plant.photoUri ? (
           <Image source={{ uri: plant.photoUri }} style={styles.photoImage} />
@@ -41,6 +83,10 @@ export function PlantRow({ plant, onWater, onEdit, onDelete }: Props) {
       <Pressable onPress={onDelete} hitSlop={8} style={styles.iconButton}>
         <Text style={styles.iconGlyph}>✕</Text>
       </Pressable>
+
+      <View {...panResponder.panHandlers} hitSlop={8} style={styles.dragHandle}>
+        <Text style={styles.iconGlyph}>⠿</Text>
+      </View>
     </View>
   );
 }
@@ -53,6 +99,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 12,
     marginBottom: 8,
+  },
+  cardDragging: {
+    opacity: 0.6,
+  },
+  dragHandle: {
+    width: 28,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 2,
   },
   photoCircle: {
     width: 32,

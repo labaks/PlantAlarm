@@ -21,6 +21,7 @@ public class PlantDto
     public long UpdatedAt { get; set; }
     public bool Deleted { get; set; }
     public string? Notes { get; set; }
+    public double? SortOrder { get; set; }
 
     /// <summary>
     /// Base64-encoded photo bytes. Only populated when the plant's photo may have changed since
@@ -71,6 +72,7 @@ public static class PlantMapper
             UpdatedAt = updatedAtMs,
             Deleted = plant.Deleted,
             Notes = plant.Notes,
+            SortOrder = plant.SortOrder,
         };
 
         var changedSinceLastSync = lastSyncAt == null || updatedAtMs > lastSyncAt;
@@ -109,6 +111,7 @@ public static class PlantMapper
             UpdatedAt = DateTimeOffset.FromUnixTimeMilliseconds(dto.UpdatedAt).UtcDateTime,
             Deleted = dto.Deleted,
             Notes = dto.Notes,
+            SortOrder = dto.SortOrder,
         };
 
         if (dto.Photo != null)
@@ -129,6 +132,7 @@ public static class PlantMapper
         target.UpdatedAt = DateTimeOffset.FromUnixTimeMilliseconds(dto.UpdatedAt).UtcDateTime;
         target.Deleted = dto.Deleted;
         target.Notes = dto.Notes;
+        target.SortOrder = dto.SortOrder;
 
         // Absent Photo/PhotoRemoved means "unchanged since the sender's last sync" — leave
         // target.PhotoPath exactly as-is in that case rather than erasing it.
