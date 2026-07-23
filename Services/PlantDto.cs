@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.IO;
 using PlantWidget.Models;
 
 namespace PlantWidget.Services;
@@ -17,35 +18,81 @@ public class PlantDto
     public string? LastNotifiedDate { get; set; }
     public long UpdatedAt { get; set; }
     public bool Deleted { get; set; }
+
+    /// <summary>
+    /// Base64-encoded photo bytes. Only populated when the plant's photo may have changed since
+    /// the sender's last successful sync (see PlantMapper.ToDto) — omitted otherwise so the
+    /// receiving side knows to leave its own local photo alone instead of erasing it.
+    /// </summary>
+    public string? Photo { get; set; }
+
+    /// <summary>File extension (no leading dot) for <see cref="Photo"/>, e.g. "jpg".</summary>
+    public string? PhotoExt { get; set; }
+
+    /// <summary>True if the photo was deliberately removed since the sender's last successful sync.</summary>
+    public bool PhotoRemoved { get; set; }
 }
 
 public static class PlantMapper
 {
     private const string DateFormat = "yyyy-MM-dd";
 
-    public static PlantDto ToDto(Plant plant) => new()
+    /// <param name="lastSyncAt">
+    /// Epoch ms of our last successful sync with the other device, or null if we've never
+    /// synced. Photo bytes are only included when this plant changed since then (or on the very
+    /// first sync), so routine syncs don't re-transfer unchanged photos every time.
+    /// </param>
+    public static PlantDto ToDto(Plant plant, long? lastSyncAt)
     {
-        Id = plant.Id,
-        Name = plant.Name,
-        IntervalDays = plant.IntervalDays,
-        LastWatered = plant.LastWatered.ToString(DateFormat, CultureInfo.InvariantCulture),
-        LastNotifiedDate = plant.LastNotified?.ToString(DateFormat, CultureInfo.InvariantCulture),
-        UpdatedAt = new DateTimeOffset(DateTime.SpecifyKind(plant.UpdatedAt, DateTimeKind.Utc)).ToUnixTimeMilliseconds(),
-        Deleted = plant.Deleted,
-    };
+        var updatedAtMs = new DateTimeOffset(DateTime.SpecifyKind(plant.UpdatedAt, DateTimeKind.Utc)).ToUnixTimeMilliseconds();
+        var dto = new PlantDto
+        {
+            Id = plant.Id,
+            Name = plant.Name,
+            IntervalDays = plant.IntervalDays,
+            LastWatered = plant.LastWatered.ToString(DateFormat, CultureInfo.InvariantCulture),
+            LastNotifiedDate = plant.LastNotified?.ToString(DateFormat, CultureInfo.InvariantCulture),
+            UpdatedAt = updatedAtMs,
+            Deleted = plant.Deleted,
+        };
 
-    public static Plant FromDto(PlantDto dto) => new()
+        var changedSinceLastSync = lastSyncAt == null || updatedAtMs > lastSyncAt;
+        if (changedSinceLastSync)
+        {
+            if (plant.PhotoPath != null && File.Exists(plant.PhotoPath))
+            {
+                dto.Photo = Convert.ToBase64String(File.ReadAllBytes(plant.PhotoPath));
+                dto.PhotoExt = Path.GetExtension(plant.PhotoPath).TrimStart('.');
+            }
+            else
+            {
+                dto.PhotoRemoved = true;
+            }
+        }
+
+        return dto;
+    }
+
+    public static Plant FromDto(PlantDto dto)
     {
-        Id = dto.Id,
-        Name = dto.Name,
-        IntervalDays = dto.IntervalDays,
-        LastWatered = DateTime.ParseExact(dto.LastWatered, DateFormat, CultureInfo.InvariantCulture),
-        LastNotified = dto.LastNotifiedDate == null
-            ? null
-            : DateTime.ParseExact(dto.LastNotifiedDate, DateFormat, CultureInfo.InvariantCulture),
-        UpdatedAt = DateTimeOffset.FromUnixTimeMilliseconds(dto.UpdatedAt).UtcDateTime,
-        Deleted = dto.Deleted,
-    };
+        var plant = new Plant
+        {
+            Id = dto.Id,
+            Name = dto.Name,
+            IntervalDays = dto.IntervalDays,
+            LastWatered = DateTime.ParseExact(dto.LastWatered, DateFormat, CultureInfo.InvariantCulture),
+            LastNotified = dto.LastNotifiedDate == null
+                ? null
+                : DateTime.ParseExact(dto.LastNotifiedDate, DateFormat, CultureInfo.InvariantCulture),
+            UpdatedAt = DateTimeOffset.FromUnixTimeMilliseconds(dto.UpdatedAt).UtcDateTime,
+            Deleted = dto.Deleted,
+        };
+
+        if (dto.Photo != null)
+            plant.PhotoPath = PhotoStore.SaveFromBytes(Convert.FromBase64String(dto.Photo), dto.PhotoExt ?? "jpg");
+
+        return plant;
+    }
 
     /// <summary>Overwrites an existing Plant's mutable fields with values from a newer DTO.</summary>
     public static void ApplyDto(Plant target, PlantDto dto)
@@ -58,5 +105,19 @@ public static class PlantMapper
             : DateTime.ParseExact(dto.LastNotifiedDate, DateFormat, CultureInfo.InvariantCulture);
         target.UpdatedAt = DateTimeOffset.FromUnixTimeMilliseconds(dto.UpdatedAt).UtcDateTime;
         target.Deleted = dto.Deleted;
+
+        // Absent Photo/PhotoRemoved means "unchanged since the sender's last sync" — leave
+        // target.PhotoPath exactly as-is in that case rather than erasing it.
+        if (dto.Photo != null)
+        {
+            var newPath = PhotoStore.SaveFromBytes(Convert.FromBase64String(dto.Photo), dto.PhotoExt ?? "jpg");
+            PhotoStore.Delete(target.PhotoPath);
+            target.PhotoPath = newPath;
+        }
+        else if (dto.PhotoRemoved)
+        {
+            PhotoStore.Delete(target.PhotoPath);
+            target.PhotoPath = null;
+        }
     }
 }

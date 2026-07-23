@@ -48,7 +48,7 @@ public partial class MainWindow : Window
             _plants.Add(new PlantItem(plant));
         _tombstones = loaded.Where(p => p.Deleted).ToList();
 
-        _syncServer = new LocalSyncServer(_store, () => Dispatcher.Invoke(ReloadPlantsFromStore));
+        _syncServer = new LocalSyncServer(_store, _settingsStore, () => Dispatcher.Invoke(ReloadPlantsFromStore));
         _syncServer.Start();
 
         var initialSettings = _settingsStore.Load();
@@ -327,6 +327,7 @@ public partial class MainWindow : Window
         if (((FrameworkElement)sender).DataContext is not PlantItem item) return;
 
         var daysSinceWatered = (DateTime.Today - item.Plant.LastWatered.Date).Days;
+        var oldPhotoPath = item.PhotoPath;
         var dialog = new AddPlantWindow(item.Name, item.IntervalDays, daysSinceWatered, item.PhotoPath) { Owner = this };
         if (dialog.ShowDialog() == true)
         {
@@ -334,6 +335,8 @@ public partial class MainWindow : Window
             item.IntervalDays = dialog.IntervalDays;
             item.SetLastWatered(DateTime.Today.AddDays(-dialog.DaysSinceWatered));
             item.SetPhotoPath(dialog.PhotoPath);
+            if (oldPhotoPath != null && oldPhotoPath != dialog.PhotoPath)
+                PhotoStore.Delete(oldPhotoPath);
             Save();
         }
     }

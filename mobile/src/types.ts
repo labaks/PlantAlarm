@@ -21,9 +21,9 @@ export interface Plant {
    */
   deleted?: boolean;
   /**
-   * Local file URI for the plant's photo. Device-local only — deliberately not synced (the
-   * desktop's sync response never carries it), since a phone URI is meaningless on the desktop
-   * and vice versa. backgroundSync.ts re-attaches it after every sync round-trip.
+   * Local file URI for the plant's photo. The URI itself is device-local (meaningless on the
+   * desktop), so it's never sent as-is — sync.ts transfers the actual photo bytes instead and
+   * rewrites this to wherever they end up saved locally on each device.
    */
   photoUri?: string;
 }

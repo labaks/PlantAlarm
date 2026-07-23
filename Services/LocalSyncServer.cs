@@ -27,13 +27,15 @@ public class LocalSyncServer
     };
 
     private readonly PlantStore _store;
+    private readonly SettingsStore _settingsStore;
     private readonly Action _onPlantsChanged;
     private TcpListener? _listener;
     private CancellationTokenSource? _cts;
 
-    public LocalSyncServer(PlantStore store, Action onPlantsChanged)
+    public LocalSyncServer(PlantStore store, SettingsStore settingsStore, Action onPlantsChanged)
     {
         _store = store;
+        _settingsStore = settingsStore;
         _onPlantsChanged = onPlantsChanged;
     }
 
@@ -98,8 +100,9 @@ public class LocalSyncServer
     {
         using (client)
         {
-            client.ReceiveTimeout = 10_000;
-            client.SendTimeout = 10_000;
+            // 30s rather than 10s: requests can now carry base64 photo bytes, not just JSON metadata.
+            client.ReceiveTimeout = 30_000;
+            client.SendTimeout = 30_000;
             var stream = client.GetStream();
 
             try
@@ -112,14 +115,22 @@ public class LocalSyncServer
                 }
                 else if (method == "POST" && path == "/sync")
                 {
+                    // Snapshot the last sync time before this request updates it, so ToDto's
+                    // "did this change since we last talked" gate compares against the right baseline.
+                    var settings = _settingsStore.Load();
+                    var lastSyncAt = settings.LastSyncAt;
+
                     var payload = JsonSerializer.Deserialize<SyncPayload>(body, WireJsonOptions) ?? new SyncPayload();
                     var local = _store.Load();
                     var merged = PlantSyncMerger.Merge(local, payload.Plants);
                     _store.Save(merged);
                     _onPlantsChanged();
 
+                    settings.LastSyncAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                    _settingsStore.Save(settings);
+
                     var responseJson = JsonSerializer.Serialize(
-                        new SyncPayload { Plants = merged.ConvertAll(PlantMapper.ToDto) },
+                        new SyncPayload { Plants = merged.ConvertAll(p => PlantMapper.ToDto(p, lastSyncAt)) },
                         WireJsonOptions);
                     await WriteResponseAsync(stream, 200, "application/json", responseJson);
                 }

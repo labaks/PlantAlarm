@@ -9,6 +9,7 @@ import { SyncSettingsModal } from './src/components/SyncSettingsModal';
 import { theme } from './src/theme';
 import { loadPlants, loadSoundEnabled, savePlants, saveSoundEnabled } from './src/storage';
 import { performSync, registerBackgroundSync } from './src/backgroundSync';
+import { deletePhotoFile } from './src/photos';
 import { ensureNotificationPermission, rescheduleAll, setSoundEnabled, setupNotificationChannel } from './src/notifications';
 import { Plant, daysLeft, formatDate, generatePlantId, isWaterable, nowMs, today } from './src/types';
 import { LanguageProvider, formatDays, useLanguage } from './src/i18n';
@@ -83,6 +84,10 @@ function AppContent() {
   };
 
   const handleEditSave = (name: string, intervalDays: number, daysSinceWatered: number, photoUri: string | undefined) => {
+    const oldPhotoUri = editingPlant!.photoUri;
+    if (oldPhotoUri && oldPhotoUri !== photoUri) {
+      deletePhotoFile(oldPhotoUri);
+    }
     const lastWatered = new Date(today());
     lastWatered.setDate(lastWatered.getDate() - daysSinceWatered);
     setPlants((prev) =>

@@ -10,4 +10,10 @@ public class AppSettings
     public bool AllowResize { get; set; } = false;
     public bool SoundEnabled { get; set; } = true;
     public string? Language { get; set; }
+
+    /// <summary>
+    /// Epoch milliseconds of the last successful /sync exchange, null if never synced.
+    /// Used to avoid re-sending a plant's photo bytes on every sync when they haven't changed.
+    /// </summary>
+    public long? LastSyncAt { get; set; }
 }

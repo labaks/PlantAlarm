@@ -29,19 +29,12 @@ export async function performSync(force: boolean): Promise<SyncOutcome> {
   }
 
   const localPlants = await loadPlants();
-  const merged = await syncWithDesktop(settings.host, settings.port, localPlants);
+  const merged = await syncWithDesktop(settings.host, settings.port, localPlants, settings.lastSyncAt);
   if (!merged) return { status: 'unreachable' };
 
-  // The desktop's response never carries photoUri (it's device-local, see types.ts), so
-  // re-attach each plant's local photo by id or the sync round-trip would wipe it out.
-  const photoById = new Map(localPlants.filter((p) => p.photoUri).map((p) => [p.id, p.photoUri]));
-  const mergedWithPhotos = merged.map((p) =>
-    photoById.has(p.id) ? { ...p, photoUri: photoById.get(p.id) } : p,
-  );
-
-  await savePlants(mergedWithPhotos);
+  await savePlants(merged);
   await saveSyncSettings({ ...settings, lastSyncAt: Date.now() });
-  return { status: 'synced', plants: mergedWithPhotos };
+  return { status: 'synced', plants: merged };
 }
 
 // Must run at module load time (before any component renders) so the OS can invoke this
