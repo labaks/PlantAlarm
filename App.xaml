@@ -9,6 +9,7 @@
 
         <conv:FillClipConverter x:Key="FillClipConverter"/>
         <conv:PhotoBrushConverter x:Key="PhotoBrushConverter"/>
+        <conv:PhotoPlaceholderVisibilityConverter x:Key="PhotoPlaceholderVisibilityConverter"/>
 
         <!-- Borderless, background-less icon button: only the glyph's Foreground darkens on hover. -->
         <Style x:Key="PlainIconButtonStyle" TargetType="Button">

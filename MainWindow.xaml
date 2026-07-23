@@ -52,7 +52,8 @@
                                                     <Binding Path="PhotoPath" Converter="{StaticResource PhotoBrushConverter}"/>
                                                 </Ellipse.Fill>
                                             </Ellipse>
-                                            <TextBlock Text="🌱" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"/>
+                                            <TextBlock Text="🌱" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"
+                                                       Visibility="{Binding PhotoPath, Converter={StaticResource PhotoPlaceholderVisibilityConverter}}"/>
                                         </Grid>
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="White" FontSize="13"/>
