@@ -1,0 +1,24 @@
+Plant Alarm is a simple watering reminder for your houseplants, with a free companion widget for Windows.
+
+💧 Water-level indicator
+See at a glance who needs watering: the droplet shows how much "water" is left until the next watering and gradually empties as the date approaches.
+
+✅ Water any time
+The "Water" button is always active — watering ahead of schedule just shows a quick confirmation instead of blocking the button.
+
+📅 Flexible schedule
+Every plant gets its own watering interval in days. You can set the last-watered date when adding a plant and adjust it later.
+
+📷 Photos and notes
+Add a photo and notes ("by the window", "doesn't like overwatering", fertilizer type) to keep track when you have a lot of plants.
+
+🔔 Notifications
+Your phone reminds you to water even when the app is closed — notifications are scheduled locally, no internet required.
+
+🔄 Sync with desktop
+There's a free Windows widget (github.com/labaks/PlantAlarm) — the phone and desktop sync your plant list directly over your local Wi-Fi network, no cloud or accounts involved.
+
+💾 Backup
+Export your plant list (with photos) to a file and restore it anytime — on your phone or on your computer.
+
+No accounts, no sign-up, no internet required — all your plant data stays on your own device.
