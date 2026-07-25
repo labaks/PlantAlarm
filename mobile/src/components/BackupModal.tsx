@@ -22,8 +22,8 @@ export function BackupModal({ visible, plants, onClose, onImported }: Props) {
   const handleExport = async () => {
     setBusy(true);
     try {
-      await exportBackup(plants);
-      setStatusMessage(t('export_success'));
+      const saved = await exportBackup(plants);
+      if (saved) setStatusMessage(t('export_success'));
     } catch (err) {
       console.warn('[backup] export failed', err);
       setStatusMessage(t('export_error'));
