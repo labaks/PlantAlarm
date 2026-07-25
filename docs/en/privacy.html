@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — Plant Alarm</title>
+<meta name="description" content="Privacy policy for the Plant Alarm apps for Windows and Android.">
+<link rel="icon" type="image/png" href="../icon.png">
+<style>
+  :root {
+    --bg: #1E2B1C;
+    --panel: #2B3A28;
+    --border: #3A5A3A;
+    --text: #FFFFFF;
+    --text-secondary: #C8D8C8;
+    --text-muted: #8CA08C;
+    --accent: #4CAF50;
+    --water: #5DADE2;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+
+  a { color: var(--water); }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 64px 24px 80px;
+  }
+
+  h1 {
+    font-size: clamp(1.7rem, 4vw, 2.3rem);
+    margin: 0 0 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .updated {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0 0 40px;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 40px 0 12px;
+  }
+
+  p, li {
+    color: var(--text-secondary);
+  }
+
+  ul { padding-left: 22px; }
+
+  .back {
+    display: inline-block;
+    margin-bottom: 32px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back:hover { color: var(--water); }
+
+  .lang-switch {
+    position: fixed;
+    top: 18px;
+    right: 24px;
+    z-index: 10;
+  }
+
+  .lang-switch select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 32px 8px 14px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    background-image: linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%), linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%);
+    background-position: calc(100% - 16px) center, calc(100% - 11px) center;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+  }
+
+  .lang-switch select:hover { border-color: var(--water); }
+  .lang-switch select:focus { outline: none; border-color: var(--water); }
+</style>
+</head>
+<body>
+
+<div class="lang-switch">
+  <select onchange="if (this.value) location.href = this.value">
+    <option value="../privacy.html">🇷🇺 Русский</option>
+    <option value="" selected>🇬🇧 English</option>
+  </select>
+</div>
+
+<div class="wrap">
+  <a class="back" href="index.html">← Back to home</a>
+
+  <h1>Plant Alarm Privacy Policy</h1>
+  <p class="updated">Last updated: July 25, 2026</p>
+
+  <p>
+    Plant Alarm is a Windows widget and Android app that remind you to water your
+    plants. There are no servers, accounts, or sign-ups — this page explains what
+    data is handled and how.
+  </p>
+
+  <h2>Your plant data</h2>
+  <p>
+    Each plant's name, watering interval, last-watered date, notes, and photo are
+    stored locally: on desktop, in a file on your own computer; on mobile, in the
+    app's local storage. This data is never sent anywhere and isn't visible to the
+    developer — Plant Alarm simply has no server to send it to.
+  </p>
+
+  <h2>Syncing between devices</h2>
+  <p>
+    The desktop and mobile apps can sync your plant list directly with each other
+    over your local Wi-Fi network (you enter the desktop's IP address manually in
+    the app). Syncing never goes through the internet, the cloud, or any third-party
+    server — only within your own home network.
+  </p>
+
+  <h2>Backup</h2>
+  <p>
+    The export/import feature creates a backup file only when you explicitly ask
+    for one, and saves it wherever you choose (a folder on your computer or phone).
+    The developer never receives a copy of this file.
+  </p>
+
+  <h2>Notifications</h2>
+  <p>
+    Watering reminders are scheduled locally on your own device and don't go
+    through any third-party push notification server.
+  </p>
+
+  <h2>Advertising (Google AdMob)</h2>
+  <p>
+    The mobile app shows ad banners via the Google Mobile Ads SDK (AdMob). To serve
+    and measure ads, Google may collect your device's advertising identifier and
+    other technical data, under its own
+    <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+    and
+    <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">Ads technology policy</a>.
+    You can manage ad personalization in Android Settings → Google → Ads. As of this
+    release only Google's official test ad units are in use — real ads will be
+    enabled later, without changing what AdMob's own infrastructure collects.
+  </p>
+
+  <h2>Children</h2>
+  <p>
+    Plant Alarm isn't directed at children and doesn't knowingly collect data from
+    children.
+  </p>
+
+  <h2>Deleting your data</h2>
+  <p>
+    Since everything is stored locally, uninstalling the app (and, on desktop,
+    removing its data folder) fully deletes all of your plant data.
+  </p>
+
+  <h2>Changes to this policy</h2>
+  <p>
+    This page may be updated as the app evolves — the current version is always
+    available at this address.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    For any privacy questions: <a href="mailto:plantalarm.app@gmail.com">plantalarm.app@gmail.com</a>
+  </p>
+</div>
+
+</body>
+</html>

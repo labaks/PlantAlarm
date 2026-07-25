@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Политика конфиденциальности — Plant Alarm</title>
+<meta name="description" content="Политика конфиденциальности приложений Plant Alarm для Windows и Android.">
+<link rel="icon" type="image/png" href="icon.png">
+<style>
+  :root {
+    --bg: #1E2B1C;
+    --panel: #2B3A28;
+    --border: #3A5A3A;
+    --text: #FFFFFF;
+    --text-secondary: #C8D8C8;
+    --text-muted: #8CA08C;
+    --accent: #4CAF50;
+    --water: #5DADE2;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+
+  a { color: var(--water); }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 64px 24px 80px;
+  }
+
+  h1 {
+    font-size: clamp(1.7rem, 4vw, 2.3rem);
+    margin: 0 0 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .updated {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0 0 40px;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 40px 0 12px;
+  }
+
+  p, li {
+    color: var(--text-secondary);
+  }
+
+  ul { padding-left: 22px; }
+
+  .back {
+    display: inline-block;
+    margin-bottom: 32px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back:hover { color: var(--water); }
+
+  .lang-switch {
+    position: fixed;
+    top: 18px;
+    right: 24px;
+    z-index: 10;
+  }
+
+  .lang-switch select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 32px 8px 14px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    background-image: linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%), linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%);
+    background-position: calc(100% - 16px) center, calc(100% - 11px) center;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+  }
+
+  .lang-switch select:hover { border-color: var(--water); }
+  .lang-switch select:focus { outline: none; border-color: var(--water); }
+</style>
+</head>
+<body>
+
+<div class="lang-switch">
+  <select onchange="if (this.value) location.href = this.value">
+    <option value="" selected>🇷🇺 Русский</option>
+    <option value="en/privacy.html">🇬🇧 English</option>
+  </select>
+</div>
+
+<div class="wrap">
+  <a class="back" href="index.html">← На главную</a>
+
+  <h1>Политика конфиденциальности Plant Alarm</h1>
+  <p class="updated">Последнее обновление: 25 июля 2026 г.</p>
+
+  <p>
+    Plant Alarm — это виджет для Windows и приложение для Android, которые напоминают
+    о поливе растений. У приложения нет серверов, аккаунтов и регистрации — эта страница
+    объясняет, какие данные обрабатываются и как.
+  </p>
+
+  <h2>Данные о ваших растениях</h2>
+  <p>
+    Название, интервал полива, дата последнего полива, заметки и фото каждого растения
+    хранятся локально: на десктопе — в файле на самом компьютере, на телефоне — в
+    хранилище приложения. Эти данные никуда не отправляются и не видны разработчику —
+    у Plant Alarm просто нет сервера, на который их можно было бы отправить.
+  </p>
+
+  <h2>Синхронизация между устройствами</h2>
+  <p>
+    Десктоп и мобильное приложение могут синхронизировать список растений напрямую
+    друг с другом по локальной Wi-Fi сети (IP-адрес десктопа вводится в приложении
+    вручную). Синхронизация не проходит через интернет, облако или сторонние серверы —
+    только внутри вашей домашней сети.
+  </p>
+
+  <h2>Резервное копирование</h2>
+  <p>
+    Функция экспорта/импорта создаёт файл резервной копии только по вашему явному
+    действию и сохраняет его туда, куда вы сами укажете (папка на компьютере или
+    на телефоне). Разработчик не получает копию этого файла.
+  </p>
+
+  <h2>Уведомления</h2>
+  <p>
+    Напоминания о поливе планируются локально на самом устройстве и не проходят
+    через сторонние push-серверы.
+  </p>
+
+  <h2>Реклама (Google AdMob)</h2>
+  <p>
+    Мобильное приложение показывает рекламные баннеры через Google Mobile Ads SDK
+    (AdMob). Для показа и измерения эффективности рекламы Google может собирать
+    рекламный идентификатор устройства и другие технические данные в соответствии
+    со своей
+    <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Политикой конфиденциальности</a>
+    и
+    <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">Политикой в отношении рекламных технологий</a>.
+    Управлять персонализацией рекламы можно в настройках Android: Настройки → Google →
+    Реклама на устройстве. На момент публикации этой версии используются только тестовые
+    рекламные ID Google — реальная реклама будет включена позже, без изменения того,
+    какие данные собирает сама техническая инфраструктура AdMob.
+  </p>
+
+  <h2>Дети</h2>
+  <p>
+    Plant Alarm не предназначено специально для детей и не собирает данные, зная,
+    что пользователь — ребёнок.
+  </p>
+
+  <h2>Удаление данных</h2>
+  <p>
+    Поскольку все данные хранятся только локально, удаление приложения (и, на
+    десктопе, папки с его данными) полностью удаляет все данные о ваших растениях.
+  </p>
+
+  <h2>Изменения политики</h2>
+  <p>
+    Эта страница может обновляться по мере развития приложения — актуальная версия
+    всегда доступна по этому адресу.
+  </p>
+
+  <h2>Контакты</h2>
+  <p>
+    По любым вопросам о конфиденциальности: <a href="mailto:plantalarm.app@gmail.com">plantalarm.app@gmail.com</a>
+  </p>
+</div>
+
+</body>
+</html>
