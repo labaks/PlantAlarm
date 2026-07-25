@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, StatusBar, StyleSheet, Text, View } from 'react-native';
+import mobileAds from 'react-native-google-mobile-ads';
 
+import { AdBanner } from './src/components/AdBanner';
 import { PlantRow } from './src/components/PlantRow';
 import { PlantFormModal } from './src/components/PlantFormModal';
 import { ConfirmModal } from './src/components/ConfirmModal';
@@ -43,6 +45,10 @@ function AppContent() {
   const dragBaseOrderRef = useRef<string[]>([]);
   const dragStartIndexRef = useRef(0);
   const rowHeightRef = useRef(0);
+
+  useEffect(() => {
+    mobileAds().initialize();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -253,31 +259,35 @@ function AppContent() {
         </Pressable>
       </View>
 
-      <FlatList
-        contentContainerStyle={styles.list}
-        data={displayPlants}
-        keyExtractor={(p) => p.id}
-        scrollEnabled={!dragId}
-        renderItem={({ item }) => (
-          <PlantRow
-            plant={item}
-            onWater={() => handleWaterPress(item)}
-            onEdit={() => setEditingPlant(item)}
-            onDelete={() => setDeletingPlant(item)}
-            onDragStart={() => handleDragStart(item.id)}
-            onDragMove={handleDragMove}
-            onDragEnd={handleDragEnd}
-            isDragging={dragId === item.id}
-            dragOffsetY={dragId === item.id ? dragOffset : undefined}
-            onRowHeight={handleRowHeight}
-          />
-        )}
-        ListEmptyComponent={<Text style={styles.empty}>{t('empty_list')}</Text>}
-      />
+      <View style={styles.listArea}>
+        <FlatList
+          contentContainerStyle={styles.list}
+          data={displayPlants}
+          keyExtractor={(p) => p.id}
+          scrollEnabled={!dragId}
+          renderItem={({ item }) => (
+            <PlantRow
+              plant={item}
+              onWater={() => handleWaterPress(item)}
+              onEdit={() => setEditingPlant(item)}
+              onDelete={() => setDeletingPlant(item)}
+              onDragStart={() => handleDragStart(item.id)}
+              onDragMove={handleDragMove}
+              onDragEnd={handleDragEnd}
+              isDragging={dragId === item.id}
+              dragOffsetY={dragId === item.id ? dragOffset : undefined}
+              onRowHeight={handleRowHeight}
+            />
+          )}
+          ListEmptyComponent={<Text style={styles.empty}>{t('empty_list')}</Text>}
+        />
 
-      <Pressable style={styles.fab} onPress={() => setFormVisible(true)}>
-        <Text style={styles.fabText}>+</Text>
-      </Pressable>
+        <Pressable style={styles.fab} onPress={() => setFormVisible(true)}>
+          <Text style={styles.fabText}>+</Text>
+        </Pressable>
+      </View>
+
+      <AdBanner />
 
       <PlantFormModal
         visible={formVisible}
@@ -361,6 +371,9 @@ const styles = StyleSheet.create({
   headerAction: {
     color: theme.textSecondary,
     fontSize: 20,
+  },
+  listArea: {
+    flex: 1,
   },
   list: {
     paddingHorizontal: 16,

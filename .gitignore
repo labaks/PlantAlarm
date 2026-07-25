@@ -3,3 +3,4 @@ obj/
 publish/
 .claude/
 *.log
+/RELEASE_CHECKLIST.md
