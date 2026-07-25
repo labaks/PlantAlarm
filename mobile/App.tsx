@@ -117,6 +117,7 @@ function AppContent() {
           lastWatered: formatDate(lastWatered),
           updatedAt: nowMs(),
           photoUri,
+          photoUpdatedAt: nowMs(),
           notes,
           sortOrder: maxOrder + 1000,
         },
@@ -133,7 +134,8 @@ function AppContent() {
     notes: string | undefined,
   ) => {
     const oldPhotoUri = editingPlant!.photoUri;
-    if (oldPhotoUri && oldPhotoUri !== photoUri) {
+    const photoChanged = oldPhotoUri !== photoUri;
+    if (oldPhotoUri && photoChanged) {
       deletePhotoFile(oldPhotoUri);
     }
     const lastWatered = new Date(today());
@@ -141,7 +143,16 @@ function AppContent() {
     setPlants((prev) =>
       prev.map((p) =>
         p.id === editingPlant!.id
-          ? { ...p, name, intervalDays, lastWatered: formatDate(lastWatered), updatedAt: nowMs(), photoUri, notes }
+          ? {
+              ...p,
+              name,
+              intervalDays,
+              lastWatered: formatDate(lastWatered),
+              updatedAt: nowMs(),
+              photoUri,
+              photoUpdatedAt: photoChanged ? nowMs() : p.photoUpdatedAt,
+              notes,
+            }
           : p,
       ),
     );

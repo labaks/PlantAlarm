@@ -27,6 +27,13 @@ public class Plant
     /// </summary>
     public string? PhotoPath { get; set; }
 
+    /// <summary>
+    /// UTC timestamp of the last change to PhotoPath specifically, tracked separately from
+    /// UpdatedAt so that an edit to an unrelated field (e.g. marking watered) can't be mistaken
+    /// for a photo change — or a photo removal — during sync merge.
+    /// </summary>
+    public DateTime PhotoUpdatedAt { get; set; } = DateTime.UtcNow;
+
     /// <summary>Free-form care notes ("by the window", "doesn't like overwatering", fertilizer type, etc.).</summary>
     public string? Notes { get; set; }
 

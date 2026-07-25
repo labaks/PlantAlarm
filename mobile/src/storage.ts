@@ -15,14 +15,20 @@ export async function loadPlants(): Promise<Plant[]> {
     // Plants saved before the updatedAt field existed: treat them as "just seen now"
     // rather than leaving updatedAt undefined, so sync conflict resolution stays sane.
     const withUpdatedAt = parsed.map((p) => (p.updatedAt ? p : { ...p, updatedAt: Date.now() }));
+    // Plants saved before photoUpdatedAt existed: seed it from updatedAt so the field-level
+    // photo merge has a sane starting point instead of treating every existing photo as
+    // freshly changed (or, worse, missing entirely).
+    const withPhotoUpdatedAt = withUpdatedAt.map((p) =>
+      p.photoUpdatedAt ? p : { ...p, photoUpdatedAt: p.updatedAt },
+    );
     // Plants saved before manual sort order existed: assign gap-spaced values from their
     // current array position, once, so drag-to-reorder has something to work from.
-    if (withUpdatedAt.some((p) => p.sortOrder === undefined)) {
-      const migrated = withUpdatedAt.map((p, i) => (p.sortOrder === undefined ? { ...p, sortOrder: i * 1000 } : p));
+    if (withPhotoUpdatedAt.some((p) => p.sortOrder === undefined)) {
+      const migrated = withPhotoUpdatedAt.map((p, i) => (p.sortOrder === undefined ? { ...p, sortOrder: i * 1000 } : p));
       await savePlants(migrated);
       return migrated;
     }
-    return withUpdatedAt;
+    return withPhotoUpdatedAt;
   } catch {
     return [];
   }

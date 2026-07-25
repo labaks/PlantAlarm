@@ -35,6 +35,8 @@ public class PlantItem : INotifyPropertyChanged
 
     public void SetPhotoPath(string? path)
     {
+        if (path != Plant.PhotoPath)
+            Plant.PhotoUpdatedAt = DateTime.UtcNow;
         Plant.PhotoPath = path;
         Plant.UpdatedAt = DateTime.UtcNow;
         OnPropertyChanged(nameof(PhotoPath));

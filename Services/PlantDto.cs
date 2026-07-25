@@ -24,6 +24,13 @@ public class PlantDto
     public double? SortOrder { get; set; }
 
     /// <summary>
+    /// Epoch ms of the last change to the photo specifically. Compared independently of
+    /// UpdatedAt during merge so an edit to an unrelated field can't be mistaken for a photo
+    /// change (see PlantSyncMerger).
+    /// </summary>
+    public long PhotoUpdatedAt { get; set; }
+
+    /// <summary>
     /// Base64-encoded photo bytes. Only populated when the plant's photo may have changed since
     /// the sender's last successful sync (see PlantMapper.ToDto) — omitted otherwise so the
     /// receiving side knows to leave its own local photo alone instead of erasing it.
@@ -62,6 +69,7 @@ public static class PlantMapper
     public static PlantDto ToDto(Plant plant, long? lastSyncAt)
     {
         var updatedAtMs = new DateTimeOffset(DateTime.SpecifyKind(plant.UpdatedAt, DateTimeKind.Utc)).ToUnixTimeMilliseconds();
+        var photoUpdatedAtMs = new DateTimeOffset(DateTime.SpecifyKind(plant.PhotoUpdatedAt, DateTimeKind.Utc)).ToUnixTimeMilliseconds();
         var dto = new PlantDto
         {
             Id = plant.Id,
@@ -73,20 +81,24 @@ public static class PlantMapper
             Deleted = plant.Deleted,
             Notes = plant.Notes,
             SortOrder = plant.SortOrder,
+            PhotoUpdatedAt = photoUpdatedAtMs,
         };
 
-        var changedSinceLastSync = lastSyncAt == null || updatedAtMs > lastSyncAt;
+        // Gated on PhotoUpdatedAt specifically, not the whole-record UpdatedAt — otherwise an
+        // edit to an unrelated field (e.g. marking watered) would look like "the photo changed
+        // since last sync" and wrongly announce it as removed below.
+        var photoChangedSinceLastSync = lastSyncAt == null || photoUpdatedAtMs > lastSyncAt;
         if (plant.PhotoPath != null && File.Exists(plant.PhotoPath))
         {
             // A photo we have is safe to (re-)send on the first sync too — worst case the
             // other side re-saves bytes it already had.
-            if (changedSinceLastSync)
+            if (photoChangedSinceLastSync)
             {
                 dto.Photo = Convert.ToBase64String(File.ReadAllBytes(plant.PhotoPath));
                 dto.PhotoExt = Path.GetExtension(plant.PhotoPath).TrimStart('.');
             }
         }
-        else if (lastSyncAt != null && changedSinceLastSync)
+        else if (lastSyncAt != null && photoChangedSinceLastSync)
         {
             // Only claim "removed" once we've synced before — on a first-ever sync, having no
             // local photo just means we've never had one to give, not that one was deleted.
@@ -96,6 +108,16 @@ public static class PlantMapper
 
         return dto;
     }
+
+    /// <summary>
+    /// dto.PhotoUpdatedAt defaults to 0 when it came from a sender that predates this field
+    /// (e.g. a backup file written by an older build); falling back to UpdatedAt reproduces the
+    /// old whole-record behavior for that one dto instead of looking like a photo from 1970.
+    /// </summary>
+    private static DateTime ResolvePhotoUpdatedAt(PlantDto dto) =>
+        dto.PhotoUpdatedAt > 0
+            ? DateTimeOffset.FromUnixTimeMilliseconds(dto.PhotoUpdatedAt).UtcDateTime
+            : DateTimeOffset.FromUnixTimeMilliseconds(dto.UpdatedAt).UtcDateTime;
 
     public static Plant FromDto(PlantDto dto)
     {
@@ -112,6 +134,7 @@ public static class PlantMapper
             Deleted = dto.Deleted,
             Notes = dto.Notes,
             SortOrder = dto.SortOrder,
+            PhotoUpdatedAt = ResolvePhotoUpdatedAt(dto),
         };
 
         if (dto.Photo != null)
@@ -120,7 +143,7 @@ public static class PlantMapper
         return plant;
     }
 
-    /// <summary>Overwrites an existing Plant's mutable fields with values from a newer DTO.</summary>
+    /// <summary>Overwrites an existing Plant's non-photo mutable fields with values from a newer DTO.</summary>
     public static void ApplyDto(Plant target, PlantDto dto)
     {
         target.Name = dto.Name;
@@ -133,7 +156,16 @@ public static class PlantMapper
         target.Deleted = dto.Deleted;
         target.Notes = dto.Notes;
         target.SortOrder = dto.SortOrder;
+    }
 
+    /// <summary>
+    /// Applies a newer DTO's photo state to an existing Plant. Kept separate from ApplyDto and
+    /// gated on its own PhotoUpdatedAt comparison (see PlantSyncMerger) so that the photo merges
+    /// independently of every other field — an edit like "marked watered" on one side no longer
+    /// wins or loses the photo along with it.
+    /// </summary>
+    public static void ApplyPhoto(Plant target, PlantDto dto)
+    {
         // Absent Photo/PhotoRemoved means "unchanged since the sender's last sync" — leave
         // target.PhotoPath exactly as-is in that case rather than erasing it.
         if (dto.Photo != null)
@@ -147,5 +179,7 @@ public static class PlantMapper
             PhotoStore.Delete(target.PhotoPath);
             target.PhotoPath = null;
         }
+
+        target.PhotoUpdatedAt = ResolvePhotoUpdatedAt(dto);
     }
 }

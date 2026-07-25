@@ -15,6 +15,8 @@ export interface PlantWireDto {
   deleted: boolean;
   notes?: string;
   sortOrder?: number;
+  /** Epoch ms of the last change to the photo specifically; compared independently of updatedAt. */
+  photoUpdatedAt: number;
   /** Base64 photo bytes — present only if the photo may have changed since lastSyncAt. */
   photo?: string;
   photoExt?: string;
@@ -28,6 +30,10 @@ export interface PlantWireDto {
  * don't re-upload unchanged photos every time.
  */
 export async function toWireDto(plant: Plant, lastSyncAt: number | null): Promise<PlantWireDto> {
+  // Legacy plants saved before photoUpdatedAt existed: fall back to updatedAt so they behave
+  // like the old whole-record check for this one sync, until an actual photo edit gives them
+  // their own value.
+  const photoUpdatedAt = plant.photoUpdatedAt ?? plant.updatedAt;
   const dto: PlantWireDto = {
     id: plant.id,
     name: plant.name,
@@ -38,13 +44,17 @@ export async function toWireDto(plant: Plant, lastSyncAt: number | null): Promis
     deleted: !!plant.deleted,
     notes: plant.notes,
     sortOrder: plant.sortOrder,
+    photoUpdatedAt,
   };
 
-  const changedSinceLastSync = lastSyncAt == null || plant.updatedAt > lastSyncAt;
+  // Gated on photoUpdatedAt specifically, not the whole-record updatedAt — otherwise an edit
+  // to an unrelated field (e.g. marking watered) would look like "the photo changed since last
+  // sync" and wrongly announce it as removed below.
+  const photoChangedSinceLastSync = lastSyncAt == null || photoUpdatedAt > lastSyncAt;
   if (plant.photoUri) {
     // A photo we have is safe to (re-)send on the first sync too — worst case the other
     // side re-saves bytes it already had.
-    if (changedSinceLastSync) {
+    if (photoChangedSinceLastSync) {
       try {
         dto.photo = await readPhotoAsBase64(plant.photoUri);
         dto.photoExt = plant.photoUri.split('.').pop()?.split('?')[0] || 'jpg';
@@ -52,7 +62,7 @@ export async function toWireDto(plant: Plant, lastSyncAt: number | null): Promis
         console.warn('[sync] failed to read local photo, sending without it', err);
       }
     }
-  } else if (lastSyncAt != null && changedSinceLastSync) {
+  } else if (lastSyncAt != null && photoChangedSinceLastSync) {
     // Only claim "removed" once we've synced before — on a first-ever sync, having no local
     // photo just means we've never had one to give, not that one was deleted. Confusing the
     // two here previously wiped out real photos on the other device.
@@ -77,6 +87,8 @@ export async function fromWireDto(dto: PlantWireDto, existing: Plant | undefined
     deleted: dto.deleted,
     notes: dto.notes,
     sortOrder: dto.sortOrder,
+    // Falls back to updatedAt if a mismatched app version on the other end omitted this field.
+    photoUpdatedAt: dto.photoUpdatedAt || dto.updatedAt,
     photoUri: existing?.photoUri,
   };
 

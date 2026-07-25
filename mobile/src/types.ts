@@ -26,6 +26,12 @@ export interface Plant {
    * rewrites this to wherever they end up saved locally on each device.
    */
   photoUri?: string;
+  /**
+   * Epoch milliseconds of the last change to photoUri specifically, tracked separately from
+   * updatedAt so that an edit to an unrelated field (e.g. marking watered) can't be mistaken for
+   * a photo change — or a photo removal — during sync merge.
+   */
+  photoUpdatedAt?: number;
   /** Free-form care notes ("by the window", "doesn't like overwatering", fertilizer type, etc.). */
   notes?: string;
   /**
