@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, Pressable, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { AppState, FlatList, Pressable, StatusBar, StyleSheet, Text, View } from 'react-native';
 import mobileAds from 'react-native-google-mobile-ads';
 
 import { AdBanner } from './src/components/AdBanner';
@@ -45,12 +45,20 @@ function AppContent() {
   const dragBaseOrderRef = useRef<string[]>([]);
   const dragStartIndexRef = useRef(0);
   const rowHeightRef = useRef(0);
+  const appStateRef = useRef(AppState.currentState);
 
   useEffect(() => {
     mobileAds().initialize();
   }, []);
 
   useEffect(() => {
+    const attemptSync = async () => {
+      const outcome = await performSync(false);
+      if (outcome.status === 'synced' && outcome.plants) {
+        setPlants(outcome.plants);
+      }
+    };
+
     (async () => {
       await setupNotificationChannel(language);
       await ensureNotificationPermission();
@@ -64,14 +72,26 @@ function AppContent() {
 
       // Background task cadence is opportunistic (OS-decided, often overnight), so also try
       // right on launch — same once-a-day throttle, just not stuck waiting on the OS scheduler.
-      const outcome = await performSync(false);
-      if (outcome.status === 'synced' && outcome.plants) {
-        setPlants(outcome.plants);
-      }
+      await attemptSync();
     })();
 
     const interval = setInterval(() => setTick((tick) => tick + 1), 5 * 60 * 1000);
-    return () => clearInterval(interval);
+
+    // The launch attempt above only fires on a genuine cold start (this effect runs once per
+    // JS engine mount) — reopening the app from the background/recents, the common case, resumes
+    // the same mounted tree without rerunning it. Without this, auto-sync could silently go
+    // untried for days despite the once-a-day throttle in performSync being long expired.
+    const appStateSub = AppState.addEventListener('change', (nextState) => {
+      if (appStateRef.current.match(/inactive|background/) && nextState === 'active') {
+        attemptSync();
+      }
+      appStateRef.current = nextState;
+    });
+
+    return () => {
+      clearInterval(interval);
+      appStateSub.remove();
+    };
   }, []);
 
   const visiblePlants = plants.filter((p) => !p.deleted);
