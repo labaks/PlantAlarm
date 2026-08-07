@@ -65,6 +65,7 @@ public static class Strings
         ["sync_address_unknown"] = ("не удалось определить IP", "couldn't detect IP"),
         ["close_button"] = ("Закрыть", "Close"),
         ["version_label"] = ("Версия {0}", "Version {0}"),
+        ["github_banner_text"] = ("⭐ Проект на GitHub", "⭐ Star on GitHub"),
 
         ["backup_label"] = ("Резервная копия", "Backup"),
         ["export_button"] = ("Экспорт", "Export"),

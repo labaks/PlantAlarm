@@ -51,8 +51,16 @@
 
                 <Button x:Name="CloseButtonElement" Style="{StaticResource DialogButtonStyle}" HorizontalAlignment="Right" Click="Close_Click"/>
 
+                <Button x:Name="GithubBannerButton" Style="{StaticResource PlainIconButtonStyle}"
+                        Margin="0,14,0,0" Click="GithubBannerButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="pack://application:,,,/Assets/app.ico" Width="16" Height="16" Margin="0,0,6,0"/>
+                        <TextBlock x:Name="GithubBannerText" FontSize="11" Foreground="#7CB97C" TextDecorations="Underline" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
                 <TextBlock x:Name="VersionText" Foreground="#6E7D6E" FontSize="11"
-                           HorizontalAlignment="Center" Margin="0,14,0,0"/>
+                           HorizontalAlignment="Center" Margin="0,6,0,0"/>
             </StackPanel>
         </StackPanel>
     </Border>

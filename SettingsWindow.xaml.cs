@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,6 +11,8 @@ namespace PlantWidget;
 
 public partial class SettingsWindow : Window
 {
+    private const string GithubUrl = "https://github.com/labaks/PlantAlarm";
+
     private readonly MainWindow _mainWindow;
     private readonly SettingsStore _settingsStore = new();
     private bool _initializing = true;
@@ -49,6 +52,7 @@ public partial class SettingsWindow : Window
         ExportButtonElement.Content = Strings.T("export_button");
         ImportButtonElement.Content = Strings.T("import_button");
         CloseButtonElement.Content = Strings.T("close_button");
+        GithubBannerText.Text = Strings.T("github_banner_text");
 
         var version = Assembly.GetExecutingAssembly().GetName().Version;
         VersionText.Text = version == null ? "" : Strings.T("version_label", $"{version.Major}.{version.Minor}.{version.Build}");
@@ -146,5 +150,10 @@ public partial class SettingsWindow : Window
     private void Close_Click(object sender, RoutedEventArgs e)
     {
         Close();
+    }
+
+    private void GithubBannerButton_Click(object sender, RoutedEventArgs e)
+    {
+        Process.Start(new ProcessStartInfo { FileName = GithubUrl, UseShellExecute = true });
     }
 }
